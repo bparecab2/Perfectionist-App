@@ -23,5 +23,20 @@ fun Screen2(navController: NavController)
         }) {
             Text(text = "Main menu")
         }
+
+        Button(onClick = {
+            navController.navigate("screen_1")
+        }) {
+            Text(text = "Good")
+        }
+
+        Button(onClick = {
+            navController.navigate("screen_1")
+        }) {
+            Text(text = "Bad")
+        }
+
+
+
     }
 }
