@@ -33,6 +33,16 @@ class MainActivity : ComponentActivity() {
                     SettingScreen(navController)
                 }
 
+                composable("good"){
+                    GoodButton(navController)
+                }
+
+                composable("bad"){
+                    BadButton(navController)
+                }
+
+
+
             })
         }
     }
