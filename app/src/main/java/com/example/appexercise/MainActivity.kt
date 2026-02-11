@@ -29,6 +29,10 @@ class MainActivity : ComponentActivity() {
                     Screen2(navController)
                 }
 
+                composable("settings"){
+                    SettingScreen(navController)
+                }
+
             })
         }
     }

@@ -12,34 +12,34 @@ import androidx.navigation.NavController
 
 
 @Composable
-fun Screen2(navController: NavController)
+fun SettingScreen(navController: NavController)
 {
     Column(
         Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "How is your back today?")
+        Text(text = "Settings")
         Button(onClick = {
-            navController.navigate("screen_1")
+            navController.navigate("screen_2")
         }) {
-            Text(text = "Main menu")
+            Text(text = "Account")
         }
 
         Button(onClick = {
-            navController.navigate("screen_1")
+            navController.navigate("screen_2")
         }) {
-            Text(text = "Good")
+            Text(text = "WiFi")
         }
 
         Button(onClick = {
-            navController.navigate("screen_1")
+            navController.navigate("screen_2")
         }) {
-            Text(text = "Bad")
+            Text(text = "Bluetooth")
         }
 
         Button(onClick = {
-            navController.navigate("settings")
+            navController.navigate("screen_2")
         }) {
-            Text(text = "Settings")
+            Text(text = "Sound")
         }
 
 
