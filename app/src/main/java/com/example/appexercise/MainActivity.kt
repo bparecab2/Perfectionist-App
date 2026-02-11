@@ -41,6 +41,22 @@ class MainActivity : ComponentActivity() {
                     BadButton(navController)
                 }
 
+                composable("Account"){
+                    AccountScrn(navController)
+                }
+
+                composable("WiFi"){
+                    WiFiScrn(navController)
+                }
+
+                composable("Bluetooth"){
+                    BluetoothScrn(navController)
+                }
+
+                composable("Sound"){
+                    SoundScrn(navController)
+                }
+
 
 
             })
