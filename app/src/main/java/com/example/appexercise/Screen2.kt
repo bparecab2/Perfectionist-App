@@ -18,20 +18,15 @@ fun Screen2(navController: NavController)
         Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
     ) {
         Text(text = "How is your back today?")
-        Button(onClick = {
-            navController.navigate("screen_1")
-        }) {
-            Text(text = "Main menu")
-        }
 
         Button(onClick = {
-            navController.navigate("screen_1")
+            navController.navigate("good")
         }) {
             Text(text = "Good")
         }
 
         Button(onClick = {
-            navController.navigate("screen_1")
+            navController.navigate("bad")
         }) {
             Text(text = "Bad")
         }
@@ -41,6 +36,13 @@ fun Screen2(navController: NavController)
         }) {
             Text(text = "Settings")
         }
+
+        Button(onClick = {
+            navController.navigate("screen_1")
+        }) {
+            Text(text = "Main menu")
+        }
+
 
 
 
