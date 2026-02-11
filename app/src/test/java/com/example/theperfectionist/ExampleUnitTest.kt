@@ -1,4 +1,4 @@
-package com.example.appexercise
+package com.example.theperfectionist
 
 import org.junit.Test
 

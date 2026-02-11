@@ -4,14 +4,16 @@ plugins {
     //alias(libs.plugins.kotlin.android)
 }
 
+val bundleId = "com.example.theperfectionist"
+
 android {
-    namespace = "com.example.appexercise"
+    namespace = bundleId
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.example.appexercise"
+        applicationId = bundleId
         minSdk = 24
         targetSdk = 36
         versionCode = 1

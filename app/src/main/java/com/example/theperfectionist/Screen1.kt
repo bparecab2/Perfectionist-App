@@ -1,4 +1,4 @@
-package com.example.appexercise
+package com.example.theperfectionist
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

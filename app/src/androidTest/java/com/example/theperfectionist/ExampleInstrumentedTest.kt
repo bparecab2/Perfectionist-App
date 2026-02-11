@@ -1,4 +1,4 @@
-package com.example.appexercise
+package com.example.theperfectionist
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
