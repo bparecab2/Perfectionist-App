@@ -19,25 +19,25 @@ fun SettingScreen(navController: NavController)
     ) {
         Text(text = "Settings")
         Button(onClick = {
-            navController.navigate("screen_2")
+            navController.navigate("Account")
         }) {
             Text(text = "Account")
         }
 
         Button(onClick = {
-            navController.navigate("screen_2")
+            navController.navigate("WiFi")
         }) {
             Text(text = "WiFi")
         }
 
         Button(onClick = {
-            navController.navigate("screen_2")
+            navController.navigate("Bluetooth")
         }) {
             Text(text = "Bluetooth")
         }
 
         Button(onClick = {
-            navController.navigate("screen_2")
+            navController.navigate("Sound")
         }) {
             Text(text = "Sound")
         }
