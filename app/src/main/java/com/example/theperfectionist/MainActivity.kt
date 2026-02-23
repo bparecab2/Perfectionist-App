@@ -18,7 +18,8 @@ import androidx.annotation.RequiresApi
 
 class MainActivity : ComponentActivity() {
 
-    lateinit var btManager: BluetoothManager12
+    lateinit var btManager: BluetoothController
+
 
     private val btPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission())
     {
@@ -37,7 +38,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        btManager = BluetoothManager12(this)
+        btManager = BluetoothController(this)
 
         // Request permission
         btPermissionLauncher.launch(android.Manifest.permission.BLUETOOTH_CONNECT)
