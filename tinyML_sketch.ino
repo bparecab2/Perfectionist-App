@@ -138,7 +138,7 @@ void recordPrototype8s(PrototypeVec &P, const char *label) {
   }
   P.ready = true;
 
-  Serial.print("✅ Recorded "); Serial.print(label);
+  Serial.print("Recorded "); Serial.print(label);
   Serial.print(" prototype. Samples="); Serial.println(n);
 }
 
@@ -169,7 +169,7 @@ void autoSetMotionThresholdFromIdeal() {
     delay(SAMPLE_MS);
   }
   motion_threshold = maxStill * 2.0f;
-  Serial.print("✅ motion_threshold = ");
+  Serial.print("motion_threshold = ");
   Serial.println(motion_threshold, 2);
 }
 
@@ -209,11 +209,11 @@ void setVibration(bool on) {
 
 void liveStepOnce() {
   if (!P_normal.ready || !P_ideal.ready) {
-    Serial.println("⚠️ Record BOTH prototypes first: N then I");
+    Serial.println("Record BOTH prototypes first: N then I");
     return;
   }
   if (motion_threshold > 900.0f) {
-    Serial.println("⚠️ Set motion threshold first: press A");
+    Serial.println("Set motion threshold first: press A");
     return;
   }
 
