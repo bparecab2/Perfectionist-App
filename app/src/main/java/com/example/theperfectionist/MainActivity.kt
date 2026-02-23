@@ -18,27 +18,27 @@ import androidx.annotation.RequiresApi
 
 class MainActivity : ComponentActivity() {
 
-    lateinit var btManager: BluetoothController
+    lateinit var btManager: BluetoothManager
 
 
     private val btPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission())
     {
-        granted -> Log.d("BT", if (granted) "BLUETOOTH_CONNECT granted" else "BLUETOOTH_CONNECT denied")
+            granted -> Log.d("BT", if (granted) "BLUETOOTH_CONNECT granted" else "BLUETOOTH_CONNECT denied")
     }
 
     private val enableBluetoothLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult())
     {
-        result -> if (result.resultCode == Activity.RESULT_OK)
-        {
-            Log.d("BT", "Bluetooth enabled")
-        }
+            result -> if (result.resultCode == Activity.RESULT_OK)
+    {
+        Log.d("BT", "Bluetooth enabled")
+    }
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        btManager = BluetoothController(this)
+        btManager = BluetoothManager(this)
 
         // Request permission
         btPermissionLauncher.launch(android.Manifest.permission.BLUETOOTH_CONNECT)
