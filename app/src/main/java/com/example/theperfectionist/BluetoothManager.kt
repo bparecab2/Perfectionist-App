@@ -22,6 +22,8 @@ class BluetoothManager(private val context: Context) {
     private fun hasBtPermission(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_CONNECT) ==
+                    PackageManager.PERMISSION_GRANTED &&
+                    context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_SCAN) ==
                     PackageManager.PERMISSION_GRANTED
         } else true
     }
@@ -38,21 +40,12 @@ class BluetoothManager(private val context: Context) {
 
         Thread {
             try {
-                if (!hasBtPermission()) return@Thread
                 val uuid: UUID = device.uuids[0].uuid
-
-                if (!hasBtPermission()) return@Thread
                 val socket = device.createRfcommSocketToServiceRecord(uuid)
-
-                if (!hasBtPermission()) return@Thread
                 bluetoothAdapter.cancelDiscovery()
-
-                if (!hasBtPermission()) return@Thread
                 socket.connect()
-
                 Log.d("BT", "Connected to ${device.name}")
                 onConnected(socket)
-
             } catch (e: IOException) {
                 Log.e("BT", "Connection failed", e)
             }
@@ -64,7 +57,6 @@ class BluetoothManager(private val context: Context) {
         if (!hasBtPermission()) return
 
         val input = socket.inputStream
-
         Thread {
             val buffer = ByteArray(1024)
             while (true) {
@@ -80,6 +72,7 @@ class BluetoothManager(private val context: Context) {
         if (!hasBtPermission()) return
         socket.outputStream.write(msg.toByteArray())
     }
+
     @SuppressLint("MissingPermission")
     fun startDiscovery(onDeviceFound: (BluetoothDevice) -> Unit) {
         if (!hasBtPermission()) return
@@ -101,6 +94,7 @@ class BluetoothManager(private val context: Context) {
         context.registerReceiver(receiver, filter)
         bluetoothAdapter.startDiscovery()
     }
+
     @SuppressLint("MissingPermission")
     fun startBleScan(onDeviceFound: (BluetoothDevice) -> Unit) {
         if (!hasBtPermission()) return
@@ -115,6 +109,4 @@ class BluetoothManager(private val context: Context) {
 
         scanner.startScan(callback)
     }
-
-
 }

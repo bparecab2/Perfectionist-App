@@ -4,7 +4,8 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,36 +28,37 @@ fun BluetoothScrn(navController: NavController) {
     var availableDevices by remember { mutableStateOf(emptyList<BluetoothDevice>()) }
     var bleDevices by remember { mutableStateOf(emptyList<BluetoothDevice>()) }
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Text(text = "Bluetooth Scanner")
-        Spacer(modifier = Modifier.height(20.dp))
+        item {
+            Text("Bluetooth Scanner")
+            Spacer(modifier = Modifier.height(20.dp))
 
-        Button(onClick = {
-            availableDevices = emptyList()
-            bleDevices = emptyList()
+            Button(onClick = {
+                availableDevices = emptyList()
+                bleDevices = emptyList()
 
-            bt.startDiscovery { device ->
-                availableDevices = availableDevices + device
+                bt.startDiscovery { device ->
+                    availableDevices = availableDevices + device
+                }
+
+                bt.startBleScan { device ->
+                    bleDevices = bleDevices + device
+                }
+            }) {
+                Text("Scan for Devices")
             }
 
-            bt.startBleScan { device ->
-                bleDevices = bleDevices + device
-            }
-        }) {
-            Text("Scan for Devices")
+            Spacer(modifier = Modifier.height(20.dp))
+            Text("Paired Devices")
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text("Paired Devices")
-        pairedDevices.forEach { device ->
+        items(pairedDevices) { device ->
             DeviceCard(device.name ?: "Unknown", device.address) {
                 bt.connectToDevice(device) { socket ->
                     bt.listenForMessages(socket)
@@ -64,10 +66,12 @@ fun BluetoothScrn(navController: NavController) {
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        item {
+            Spacer(modifier = Modifier.height(20.dp))
+            Text("Available Devices")
+        }
 
-        Text("Available Devices")
-        availableDevices.forEach { device ->
+        items(availableDevices) { device ->
             DeviceCard(device.name ?: "Unknown", device.address) {
                 bt.connectToDevice(device) { socket ->
                     bt.listenForMessages(socket)
@@ -75,10 +79,12 @@ fun BluetoothScrn(navController: NavController) {
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        item {
+            Spacer(modifier = Modifier.height(20.dp))
+            Text("BLE Devices")
+        }
 
-        Text("BLE Devices")
-        bleDevices.forEach { device ->
+        items(bleDevices) { device ->
             DeviceCard(device.name ?: "Unknown BLE Device", device.address) {
                 bt.connectToDevice(device) { socket ->
                     bt.listenForMessages(socket)
