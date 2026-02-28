@@ -17,9 +17,27 @@ fun Screen2(navController: NavController)
     Column(
         Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "How is your back today?")
+
+
+        Text(text = "Is this your first time using our product?")
+
 
         Button(onClick = {
+            navController.navigate("Bluetooth")
+        }) {
+            Text(text = "Yes")
+        }
+
+        Button(onClick = {
+            navController.navigate("screen_3")
+        }) {
+            Text(text = "No")
+        }
+
+
+        /* Text(text = "How is your back today?")
+
+       Button(onClick = {
             navController.navigate("good")
         }) {
             Text(text = "Good")
@@ -29,7 +47,10 @@ fun Screen2(navController: NavController)
             navController.navigate("bad")
         }) {
             Text(text = "Bad")
-        }
+        }*/
+
+
+
 
         Button(onClick = {
             navController.navigate("settings")
@@ -37,11 +58,11 @@ fun Screen2(navController: NavController)
             Text(text = "Settings")
         }
 
-        Button(onClick = {
+       /* Button(onClick = {
             navController.navigate("screen_1")
         }) {
             Text(text = "Main menu")
-        }
+        }*/
 
 
 
