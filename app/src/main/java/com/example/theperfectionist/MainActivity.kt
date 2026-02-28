@@ -63,9 +63,10 @@ class MainActivity : ComponentActivity() {
             NavHost(navController = navController, startDestination = "screen_1") {
                 composable("screen_1") { Screen1(navController) }
                 composable("screen_2") { Screen2(navController) }
+                composable("screen_3") { Screen3(navController) }
                 composable("settings") { SettingScreen(navController) }
-                composable("good") { GoodButton(navController) }
-                composable("bad") { BadButton(navController) }
+                //composable("good") { GoodButton(navController) }
+                //composable("bad") { BadButton(navController) }
                 composable("Account") { AccountScrn(navController) }
                 composable("WiFi") { WiFiScrn(navController) }
                 composable("Bluetooth") { BluetoothScrn(navController) }
