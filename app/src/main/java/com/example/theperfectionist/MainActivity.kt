@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
 
     lateinit var btManager: BluetoothManager
 
-    @RequiresApi(Build.VERSION_CODES.S)
+    /*@RequiresApi(Build.VERSION_CODES.S)
     private val btPermissionsLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { perms ->
             val connectGranted = perms[android.Manifest.permission.BLUETOOTH_CONNECT] == true
@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
             if (result.resultCode == Activity.RESULT_OK) {
                 Log.d("BT", "Bluetooth enabled")
             }
-        }
+        }*/
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
         btManager = BluetoothManager(this)
 
         // Request BOTH permissions
-        btPermissionsLauncher.launch(
+        /*btPermissionsLauncher.launch(
             arrayOf(
                 android.Manifest.permission.BLUETOOTH_CONNECT,
                 android.Manifest.permission.BLUETOOTH_SCAN
@@ -71,7 +71,7 @@ class MainActivity : ComponentActivity() {
         if (systemAdapter != null && !systemAdapter.isEnabled) {
             val intent = Intent(android.bluetooth.BluetoothAdapter.ACTION_REQUEST_ENABLE)
             enableBluetoothLauncher.launch(intent)
-        }
+        }*/
 
         setContent {
             val navController = rememberNavController()
