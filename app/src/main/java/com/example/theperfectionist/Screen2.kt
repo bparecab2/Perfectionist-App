@@ -72,10 +72,5 @@ fun Screen2(navController: NavController) {
             Text(text = "No")
         }
 
-        Button(onClick = {
-            navController.navigate("settings")
-        }) {
-            Text(text = "Settings")
-        }
     }
 }

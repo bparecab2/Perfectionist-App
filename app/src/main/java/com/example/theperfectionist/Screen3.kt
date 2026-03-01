@@ -80,6 +80,12 @@ fun Screen3(navController: NavController)
             Text(text = "Bluetooth")
         }
 
+        Button(onClick = {
+            navController.navigate("settings")
+        }) {
+            Text(text = "Settings")
+        }
+
 
     }
 }
