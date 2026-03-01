@@ -21,7 +21,7 @@ fun Screen1(navController: NavController)
         Button(onClick = {
             navController.navigate("screen_2")
         }) {
-            Text(text = "Tap to continue")
+            Text(text = "Tap to start")
         }
     }
 }
