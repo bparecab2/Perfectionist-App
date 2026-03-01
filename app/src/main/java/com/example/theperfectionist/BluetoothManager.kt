@@ -40,17 +40,24 @@ class BluetoothManager(private val context: Context) {
 
         Thread {
             try {
-                val uuid: UUID = device.uuids[0].uuid
-                val socket = device.createRfcommSocketToServiceRecord(uuid)
+                // Try to get a UUID from the device, otherwise fall back to SPP UUID
+                val uuid: UUID? = device.uuids?.firstOrNull()?.uuid
+                val serviceUuid = uuid ?: UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+
+                val socket = device.createRfcommSocketToServiceRecord(serviceUuid)
+
                 bluetoothAdapter.cancelDiscovery()
                 socket.connect()
-                Log.d("BT", "Connected to ${device.name}")
+
+                Log.d("BT", "Connected to ${device.name} with UUID=$serviceUuid")
                 onConnected(socket)
-            } catch (e: IOException) {
-                Log.e("BT", "Connection failed", e)
+
+            } catch (e: Exception) {
+                Log.e("BT", "Connection failed to ${device.name}", e)
             }
         }.start()
     }
+
 
     @SuppressLint("MissingPermission")
     fun listenForMessages(socket: BluetoothSocket) {
