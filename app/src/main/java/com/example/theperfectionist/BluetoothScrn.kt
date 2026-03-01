@@ -62,14 +62,7 @@ fun BluetoothScrn(navController: NavController) {
         // CLASSIC PAIRED DEVICES
         items(pairedDevices) { device ->
             DeviceCard(device.name ?: "Unknown", device.address) {
-                bt.connectToDevice(device) { socket ->
-                    if (socket != null) {
-                        bt.listenForMessages(socket)
-                    } else {
-                        // BLE device connected (GATT)
-                        // No socket exists for BLE
-                    }
-                }
+                navController.navigate("calibration/${device.address}")
             }
         }
 
@@ -81,13 +74,7 @@ fun BluetoothScrn(navController: NavController) {
 
         items(availableDevices) { device ->
             DeviceCard(device.name ?: "Unknown", device.address) {
-                bt.connectToDevice(device) { socket ->
-                    if (socket != null) {
-                        bt.listenForMessages(socket)
-                    } else {
-                        // BLE device connected (GATT)
-                    }
-                }
+                navController.navigate("calibration/${device.address}")
             }
         }
 
@@ -99,13 +86,7 @@ fun BluetoothScrn(navController: NavController) {
 
         items(bleDevices) { device ->
             DeviceCard(device.name ?: "Unknown BLE Device", device.address) {
-                bt.connectToDevice(device) { socket ->
-                    if (socket != null) {
-                        bt.listenForMessages(socket)
-                    } else {
-                        // BLE device connected (GATT)
-                    }
-                }
+                navController.navigate("calibration/${device.address}")
             }
         }
     }
