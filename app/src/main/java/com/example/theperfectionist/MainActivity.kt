@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 import android.app.Activity
+import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.os.Build
 import android.util.Log
@@ -41,6 +42,18 @@ class MainActivity : ComponentActivity() {
                 composable("WiFi") { WiFiScrn(navController) }
                 composable("Bluetooth") { BluetoothScrn(navController) }
                 composable("Sound") { SoundScrn(navController) }
+                composable("calibration/{mac}") { backStack ->
+                    val mac = backStack.arguments?.getString("mac")!!
+                    val adapter = BluetoothAdapter.getDefaultAdapter()
+                    val device = adapter.getRemoteDevice(mac)
+
+                    CalibrationScrn(device = device)
+                }
+
+
+
+
+
             }
         }
     }
