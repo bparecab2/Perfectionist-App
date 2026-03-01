@@ -35,6 +35,7 @@ fun BluetoothScrn(navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
+        // HEADER + SCAN BUTTON
         item {
             Text("Bluetooth Scanner")
             Spacer(modifier = Modifier.height(20.dp))
@@ -58,14 +59,21 @@ fun BluetoothScrn(navController: NavController) {
             Text("Paired Devices")
         }
 
+        // CLASSIC PAIRED DEVICES
         items(pairedDevices) { device ->
             DeviceCard(device.name ?: "Unknown", device.address) {
                 bt.connectToDevice(device) { socket ->
-                    bt.listenForMessages(socket)
+                    if (socket != null) {
+                        bt.listenForMessages(socket)
+                    } else {
+                        // BLE device connected (GATT)
+                        // No socket exists for BLE
+                    }
                 }
             }
         }
 
+        // AVAILABLE DEVICES
         item {
             Spacer(modifier = Modifier.height(20.dp))
             Text("Available Devices")
@@ -74,11 +82,16 @@ fun BluetoothScrn(navController: NavController) {
         items(availableDevices) { device ->
             DeviceCard(device.name ?: "Unknown", device.address) {
                 bt.connectToDevice(device) { socket ->
-                    bt.listenForMessages(socket)
+                    if (socket != null) {
+                        bt.listenForMessages(socket)
+                    } else {
+                        // BLE device connected (GATT)
+                    }
                 }
             }
         }
 
+        // BLE DEVICES
         item {
             Spacer(modifier = Modifier.height(20.dp))
             Text("BLE Devices")
@@ -87,7 +100,11 @@ fun BluetoothScrn(navController: NavController) {
         items(bleDevices) { device ->
             DeviceCard(device.name ?: "Unknown BLE Device", device.address) {
                 bt.connectToDevice(device) { socket ->
-                    bt.listenForMessages(socket)
+                    if (socket != null) {
+                        bt.listenForMessages(socket)
+                    } else {
+                        // BLE device connected (GATT)
+                    }
                 }
             }
         }

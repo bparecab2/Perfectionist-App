@@ -35,28 +35,51 @@ class BluetoothManager(private val context: Context) {
     }
 
     @SuppressLint("MissingPermission")
-    fun connectToDevice(device: BluetoothDevice, onConnected: (BluetoothSocket) -> Unit) {
+    fun connectToDevice(device: BluetoothDevice, onConnected: (BluetoothSocket?) -> Unit) {
         if (!hasBtPermission()) return
 
+        // BLE devices must use GATT
+        if (device.type == BluetoothDevice.DEVICE_TYPE_LE ||
+            device.type == BluetoothDevice.DEVICE_TYPE_DUAL) {
+
+            Log.d("BT", "Connecting to BLE device: ${device.name}")
+
+            device.connectGatt(context, false, object : android.bluetooth.BluetoothGattCallback() {
+                override fun onConnectionStateChange(
+                    gatt: android.bluetooth.BluetoothGatt,
+                    status: Int,
+                    newState: Int
+                ) {
+                    if (newState == android.bluetooth.BluetoothProfile.STATE_CONNECTED) {
+                        Log.d("BT", "BLE Connected to ${device.name}")
+                        onConnected(null) // no socket for BLE
+                    }
+                }
+            })
+
+            return
+        }
+
+        // Classic RFCOMM devices
         Thread {
             try {
-                // Try to get a UUID from the device, otherwise fall back to SPP UUID
-                val uuid: UUID? = device.uuids?.firstOrNull()?.uuid
-                val serviceUuid = uuid ?: UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+                val uuid = device.uuids?.firstOrNull()?.uuid
+                    ?: UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
-                val socket = device.createRfcommSocketToServiceRecord(serviceUuid)
-
+                val socket = device.createRfcommSocketToServiceRecord(uuid)
                 bluetoothAdapter.cancelDiscovery()
                 socket.connect()
 
-                Log.d("BT", "Connected to ${device.name} with UUID=$serviceUuid")
+                Log.d("BT", "RFCOMM Connected to ${device.name}")
                 onConnected(socket)
 
             } catch (e: Exception) {
-                Log.e("BT", "Connection failed to ${device.name}", e)
+                Log.e("BT", "RFCOMM connection failed", e)
+                onConnected(null)
             }
         }.start()
     }
+
 
 
     @SuppressLint("MissingPermission")
