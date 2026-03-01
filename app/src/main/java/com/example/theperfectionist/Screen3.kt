@@ -36,7 +36,7 @@ fun Screen3(navController: NavController)
 
     var permissionsGranted by remember { mutableStateOf(false) }
 
-    // 1. Declare Bluetooth enable launcher FIRST
+    //Declare Bluetooth enable launcher first
     val enableBluetoothLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == android.app.Activity.RESULT_OK) {
@@ -47,7 +47,7 @@ fun Screen3(navController: NavController)
 
 
 
-    // 2. Declare permission launcher AFTER, so it can call the Bluetooth launcher
+    // Declare permission launcher after, so it can call the Bluetooth launcher
     val permissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
             permissionsGranted = results.values.all { it }
@@ -72,6 +72,12 @@ fun Screen3(navController: NavController)
         }) {
             Text(text = "Run settings")
         }*/
+
+        Button(onClick = {
+            navController.navigate("Bluetooth")
+        }) {
+            Text(text = "Calibrate")
+        }
 
         Button(onClick = {
 
