@@ -3,10 +3,12 @@ package com.example.theperfectionist
 import android.annotation.SuppressLint
 import android.bluetooth.*
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import java.nio.charset.Charset
@@ -17,6 +19,7 @@ fun CalibrationScrn(
     device: BluetoothDevice,          // You pass this from BluetoothScrn
     onDisconnect: () -> Unit = {}     // Optional callback
 ) {
+    Box(Modifier.fillMaxSize().background(Color(0xFFE3F2FD).copy(alpha = 0.85f)))
     val context = LocalContext.current
 
     // BLE UUIDs

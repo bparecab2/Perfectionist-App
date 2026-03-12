@@ -2,17 +2,22 @@ package com.example.theperfectionist
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -20,6 +25,8 @@ import androidx.navigation.NavController
 @SuppressLint("MissingPermission", "ContextCastToActivity")
 @Composable
 fun BluetoothScrn(navController: NavController) {
+
+    Box(Modifier.fillMaxSize().background(Color(0xFFE3F2FD).copy(alpha = 0.85f)))
 
     val activity = LocalContext.current as MainActivity
     val bt = activity.btManager
@@ -51,8 +58,16 @@ fun BluetoothScrn(navController: NavController) {
                 bt.startBleScan { device ->
                     bleDevices = bleDevices + device
                 }
-            }) {
-                Text("Scan for Devices")
+            },
+
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC5).copy(alpha = 0.15f)),
+                shape = RoundedCornerShape(20.dp),
+                border = BorderStroke(2.dp, Color(0xFF009688).copy(alpha = 0.4f)),
+                //elevation = ButtonDefaults.buttonElevation(8.dp),
+                elevation = null,
+                contentPadding = PaddingValues(16.dp))
+            {
+                Text("Scan for Devices", color = Color.DarkGray)
             }
 
             Spacer(modifier = Modifier.height(20.dp))
