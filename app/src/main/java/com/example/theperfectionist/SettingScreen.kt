@@ -29,7 +29,7 @@ import androidx.navigation.NavController
 fun SettingScreen(navController: NavController)
 {
     Box(Modifier.fillMaxSize().background(Color(0xFFA2CCFF).copy(alpha = 0.85f)))
-    
+
     Row(Modifier.offset(0.dp, 30.dp))
     {
         IconButton(onClick = { navController.navigate("screen_2") }) {
