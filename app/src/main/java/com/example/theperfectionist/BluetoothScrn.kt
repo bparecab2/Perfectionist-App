@@ -39,7 +39,7 @@ fun BluetoothScrn(navController: NavController) {
     var availableDevices by remember { mutableStateOf(emptyList<BluetoothDevice>()) }
     var bleDevices by remember { mutableStateOf(emptyList<BluetoothDevice>()) }
 
-    Row(Modifier.offset(0.dp, 30.dp))
+    Row(Modifier.offset(0.dp, 40.dp))
     {
         IconButton(onClick = { navController.navigate("screen_3") }) {
             Icon(
@@ -57,6 +57,7 @@ fun BluetoothScrn(navController: NavController) {
 
         // HEADER + SCAN BUTTON
         item {
+            Spacer(modifier = Modifier.height(30.dp))
             Text("Bluetooth Scanner")
             Spacer(modifier = Modifier.height(20.dp))
 
