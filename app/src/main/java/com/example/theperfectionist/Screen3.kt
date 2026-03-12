@@ -1,6 +1,7 @@
 package com.example.theperfectionist
 
 import android.Manifest
+import android.R.attr.navigationIcon
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.os.Build
@@ -12,12 +13,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -70,12 +79,37 @@ fun Screen3(navController: NavController)
                 enableBluetoothLauncher.launch(enableIntent)
             }
         }
-
-Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.Top)
+Row(Modifier.offset(0.dp, 30.dp))
 {
-    IconButton(onClick = {})
+    IconButton(onClick = { navController.navigate("screen_2") }) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = "Localized description"
+        )
+    }
+}
+
+    var expanded by remember { mutableStateOf(false) }
+Row(Modifier.offset(300.dp, 30.dp))
+{
+    IconButton(onClick = {expanded = !expanded})
     {
-        Icon(imageVector = Icons.Filled.Menu, contentDescription = "Localized description")
+       // Icon(imageVector = Icons.Filled.Menu, contentDescription = "More options") //Hamburger Bar
+        Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More options") // 3 Verticle Dots
+    }
+    DropdownMenu(expanded = expanded, onDismissRequest = {expanded = false})
+    {
+        DropdownMenuItem(text = {Text("Account")},
+            onClick = {navController.navigate("Account")})
+
+        DropdownMenuItem(text = {Text("Wifi")},
+            onClick = {navController.navigate("WiFi")})
+
+        DropdownMenuItem(text = {Text("Bluetooth")},
+            onClick = { navController.navigate("Bluetooth")})
+
+        DropdownMenuItem(text = {Text("Sound")},
+            onClick = { navController.navigate("Sound")})
     }
 
 }
