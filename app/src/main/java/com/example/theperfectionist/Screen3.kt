@@ -14,8 +14,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,7 +37,7 @@ import androidx.navigation.NavController
 fun Screen3(navController: NavController)
 {
 
-    Box(Modifier.fillMaxSize().background(Color(0xFFE3F2FD).copy(alpha = 0.85f)))
+    Box(Modifier.fillMaxSize().background(Color(0xFFA2CCFF).copy(alpha = 0.85f)))
 
     val permissions = buildList {
         add(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -67,12 +71,16 @@ fun Screen3(navController: NavController)
             }
         }
 
+Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.Top)
+{
+    IconButton(onClick = {})
+    {
+        Icon(imageVector = Icons.Filled.Menu, contentDescription = "Localized description")
+    }
 
-
-
-    Column(
-        Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
-    ) {
+}
+    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center)
+    {
 
 
         //Text(text = "")
