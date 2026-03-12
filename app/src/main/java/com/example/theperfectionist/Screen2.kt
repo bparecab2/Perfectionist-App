@@ -27,7 +27,7 @@ import androidx.navigation.NavController
 @Composable
 fun Screen2(navController: NavController) {
 
-    Box(Modifier.fillMaxSize().background(Color(0xFFE3F2FD).copy(alpha = 0.85f)))
+    Box(Modifier.fillMaxSize().background(Color(0xFFA2CCFF).copy(alpha = 0.85f)))
 
     val permissions = buildList {
         add(Manifest.permission.ACCESS_FINE_LOCATION)
