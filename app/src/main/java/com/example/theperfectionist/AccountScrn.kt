@@ -25,7 +25,7 @@ fun AccountScrn(navController: NavController) {
 
     Row(Modifier.offset(0.dp, 30.dp))
     {
-        IconButton(onClick = { navController.navigate("screen_2") }) {
+        IconButton(onClick = { navController.navigate("screen_3") }) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Localized description"
