@@ -79,40 +79,49 @@ fun Screen3(navController: NavController)
                 enableBluetoothLauncher.launch(enableIntent)
             }
         }
-Row(Modifier.offset(0.dp, 30.dp))
-{
-    IconButton(onClick = { navController.navigate("screen_2") }) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = "Localized description"
-        )
-    }
-}
+//Row(Modifier.offset(0.dp, 30.dp)) //Back arrow orignal position for Brian's phone screen size
+        Row(modifier = Modifier.fillMaxWidth().padding(top = 30.dp, start = 10.dp, end = 10.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) //This line will automatically adjust the button position based on phone screen size
+        {
+            IconButton(onClick = { navController.navigate("screen_2") }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Localized description"
+                )
+            }
 
-    var expanded by remember { mutableStateOf(false) }
-Row(Modifier.offset(300.dp, 30.dp))
-{
-    IconButton(onClick = {expanded = !expanded})
-    {
-       // Icon(imageVector = Icons.Filled.Menu, contentDescription = "More options") //Hamburger Bar
-        Icon(imageVector = Icons.Default.MoreVert, contentDescription = "More options") // 3 Verticle Dots
-    }
-    DropdownMenu(expanded = expanded, onDismissRequest = {expanded = false})
-    {
-        DropdownMenuItem(text = {Text("Account")},
-            onClick = {navController.navigate("Account")})
+            var expanded by remember { mutableStateOf(false) }
+//Row(Modifier.offset(300.dp, 30.dp)) //original way
+            Box {
 
-        DropdownMenuItem(text = {Text("Wifi")},
-            onClick = {navController.navigate("WiFi")})
+                IconButton(onClick = { expanded = !expanded })
+                {
+                    // Icon(imageVector = Icons.Filled.Menu, contentDescription = "More options") //Hamburger Bar
+                    Icon(
+                        imageVector = Icons.Default.MoreVert,
+                        contentDescription = "More options"
+                    ) // 3 Verticle Dots
+                }
+                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false })
+                {
+                    DropdownMenuItem(
+                        text = { Text("Account") },
+                        onClick = { navController.navigate("Account") })
 
-        DropdownMenuItem(text = {Text("Bluetooth")},
-            onClick = { navController.navigate("Bluetooth")})
+                    DropdownMenuItem(
+                        text = { Text("Wifi") },
+                        onClick = { navController.navigate("WiFi") })
 
-        DropdownMenuItem(text = {Text("Sound")},
-            onClick = { navController.navigate("Sound")})
-    }
+                    DropdownMenuItem(
+                        text = { Text("Bluetooth") },
+                        onClick = { navController.navigate("Bluetooth") })
 
-}
+                    DropdownMenuItem(
+                        text = { Text("Sound") },
+                        onClick = { navController.navigate("Sound") })
+                }
+
+            }
+        }
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center)
     {
 
@@ -155,7 +164,8 @@ Row(Modifier.offset(300.dp, 30.dp))
             Text(text = "Bluetooth", color = Color.DarkGray)
         }
 
-        Button(onClick = {
+        //remove/comment out the settings button
+        /*Button(onClick = {
             navController.navigate("settings")
         }
 
@@ -170,7 +180,7 @@ Row(Modifier.offset(300.dp, 30.dp))
 
         {
             Text(text = "Settings", color = Color.DarkGray)
-        }
+        }*/
 
 
     }
