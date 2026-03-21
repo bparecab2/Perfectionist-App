@@ -7,17 +7,23 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import java.nio.charset.Charset
 import java.util.UUID
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun CalibrationScrn(
     device: BluetoothDevice,          // You pass this from BluetoothScrn
-    onDisconnect: () -> Unit = {}     // Optional callback
+    onDisconnect: () -> Unit = {},     // Optional callback
+    navController: NavController
 ) {
     Box(Modifier.fillMaxSize().background(Color(0xFFE3F2FD).copy(alpha = 0.85f)))
     val context = LocalContext.current
@@ -36,6 +42,10 @@ fun CalibrationScrn(
     var pitch by remember { mutableStateOf("--") }
     var posture by remember { mutableStateOf("--") }
 
+    val activity = context as MainActivity
+    val bt = activity.btManager
+
+
     // === GATT CALLBACK ===
     val gattCallback = remember {
         object : BluetoothGattCallback() {
@@ -44,6 +54,8 @@ fun CalibrationScrn(
             override fun onConnectionStateChange(g: BluetoothGatt, statusCode: Int, newState: Int) {
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
                     status = "Connected. Discovering services..."
+                    bt.isConnected = true
+                    bt.connectedDevice = device
                     g.discoverServices()
                 } else {
                     status = "Disconnected"
@@ -100,22 +112,27 @@ fun CalibrationScrn(
         onDisconnect()
     }
 
-    // === UI ===
-    Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Text("Calibration", style = MaterialTheme.typography.headlineSmall)
 
-        OutlinedButton(onClick = { disconnect() }) {
-            Text("Disconnect")
+        // === UI ===
+        Column(
+            modifier = Modifier.fillMaxSize().padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text("Calibration", style = MaterialTheme.typography.headlineSmall)
+
+                OutlinedButton(onClick = { disconnect() }) {
+                    Text("Disconnect")
+                }
+                Button(onClick = { navController.navigate("screen_3")}) {
+                    Text("Home")
+                }
+
+            Text("Status: $status")
+            Spacer(Modifier.height(8.dp))
+
+            Text("Roll: $roll°", style = MaterialTheme.typography.headlineMedium)
+            Text("Pitch: $pitch°", style = MaterialTheme.typography.headlineMedium)
+            Text("Posture: $posture", style = MaterialTheme.typography.headlineMedium)
         }
-
-        Text("Status: $status")
-        Spacer(Modifier.height(8.dp))
-
-        Text("Roll: $roll°", style = MaterialTheme.typography.headlineMedium)
-        Text("Pitch: $pitch°", style = MaterialTheme.typography.headlineMedium)
-        Text("Posture: $posture", style = MaterialTheme.typography.headlineMedium)
     }
-}
+

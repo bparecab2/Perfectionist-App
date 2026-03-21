@@ -5,8 +5,10 @@ import android.R.attr.navigationIcon
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.os.Build
+
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.bluetooth.BluetoothDevice
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +42,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+
+import androidx.compose.ui.platform.LocalContext
 
 
 @Composable
@@ -79,7 +83,7 @@ fun Screen3(navController: NavController)
                 enableBluetoothLauncher.launch(enableIntent)
             }
         }
-//Row(Modifier.offset(0.dp, 30.dp)) //Back arrow orignal position for Brian's phone screen size
+//Row(Modifier.offset(0.dp, 30.dp)) //Back arrow original position for Brian's phone screen size
         Row(modifier = Modifier.fillMaxWidth().padding(top = 30.dp, start = 10.dp, end = 10.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) //This line will automatically adjust the button position based on phone screen size
         {
             IconButton(onClick = { navController.navigate("screen_2") }) {
@@ -99,7 +103,7 @@ fun Screen3(navController: NavController)
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "More options"
-                    ) // 3 Verticle Dots
+                    ) // 3 Vertical Dots
                 }
                 DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false })
                 {
@@ -134,18 +138,30 @@ fun Screen3(navController: NavController)
             Text(text = "Run settings")
         }*/
 
-        Button(onClick = {
-            navController.navigate("Bluetooth")
-        },
+        val context = LocalContext.current
+        val activity = context as? MainActivity
+        val bt = activity?.btManager
+        val isConnected = bt?.isConnected == true
+        val connectedDevice = bt?.connectedDevice
+
+
+        Button(
+            onClick = {
+                if (isConnected && connectedDevice != null) {
+                    navController.navigate("calibration/${connectedDevice.address}")
+                } else {
+                    navController.navigate("Bluetooth")
+                }
+            },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC5).copy(alpha = 0.15f)),
             shape = RoundedCornerShape(20.dp),
             border = BorderStroke(2.dp, Color(0xFF009688).copy(alpha = 0.4f)),
-            //elevation = ButtonDefaults.buttonElevation(8.dp),
             elevation = null,
-            contentPadding = PaddingValues(16.dp))
-        {
+            contentPadding = PaddingValues(16.dp)
+        ) {
             Text(text = "Calibrate", color = Color.DarkGray)
         }
+
 
         Button(onClick = {
 

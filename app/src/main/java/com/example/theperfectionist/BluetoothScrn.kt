@@ -11,10 +11,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -34,12 +37,25 @@ fun BluetoothScrn(navController: NavController) {
 
     val activity = LocalContext.current as MainActivity
     val bt = activity.btManager
+    val isConnected = bt.isConnected // to check if the bluetooth is already connected
+
+    if (isConnected) {
+        Column(Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Already Connected to Bluetooth", color = Color.DarkGray
+            )
+        }
+        return
+    }
 
     var pairedDevices by remember { mutableStateOf(bt.getPairedDevices()?.toList() ?: emptyList<BluetoothDevice>()) }
     var availableDevices by remember { mutableStateOf(emptyList<BluetoothDevice>()) }
     var bleDevices by remember { mutableStateOf(emptyList<BluetoothDevice>()) }
 
-    Row(Modifier.offset(0.dp, 40.dp))
+    Row(modifier = Modifier.fillMaxWidth().padding(top = 30.dp, start = 10.dp, end = 10.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) //This line will automatically adjust the button position based on phone screen size
     {
         IconButton(onClick = { navController.navigate("screen_3") }) {
             Icon(

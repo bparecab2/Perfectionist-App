@@ -13,6 +13,8 @@ import java.io.IOException
 import java.util.UUID
 
 class BluetoothManager(private val context: Context) {
+    var isConnected: Boolean = false
+    var connectedDevice: BluetoothDevice? = null
 
     private val bluetoothAdapter: BluetoothAdapter by lazy {
         val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
