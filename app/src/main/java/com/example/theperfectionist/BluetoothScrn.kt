@@ -18,9 +18,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,7 +58,7 @@ fun BluetoothScrn(navController: NavController) {
     var availableDevices by remember { mutableStateOf(emptyList<BluetoothDevice>()) }
     var bleDevices by remember { mutableStateOf(emptyList<BluetoothDevice>()) }
 
-    Row(modifier = Modifier.fillMaxWidth().padding(top = 30.dp, start = 10.dp, end = 10.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) //This line will automatically adjust the button position based on phone screen size
+/*    Row(modifier = Modifier.fillMaxWidth().padding(top = 30.dp, start = 10.dp, end = 10.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) //This line will automatically adjust the button position based on phone screen size
     {
         IconButton(onClick = { navController.navigate("screen_3") }) {
             Icon(
@@ -63,7 +66,64 @@ fun BluetoothScrn(navController: NavController) {
                 contentDescription = "Localized description"
             )
         }
-    }
+    }*/
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    TopAppBar(
+        title = {
+            Text(
+                text = "",
+                color = Color(0xFF003366),
+                style = androidx.compose.material3.MaterialTheme.typography.titleLarge
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = { navController.navigate("screen_2") }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color(0xFF003366)
+                )
+            }
+        },
+        actions = {
+            var expanded by remember { mutableStateOf(false) }
+
+            IconButton(onClick = { expanded = true }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "More options",
+                    tint = Color(0xFF003366)
+                )
+            }
+
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Account") },
+                    onClick = { navController.navigate("Account") }
+                )
+                DropdownMenuItem(   //remove wifi section (most likely will not need it)
+                    text = { Text("Wifi") },
+                    onClick = { navController.navigate("WiFi") }
+                )
+
+                DropdownMenuItem(
+                    text = { Text("Sound") },
+                    onClick = { navController.navigate("Sound") }
+                )
+            }
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = Color(0xFFA2CCFF).copy(alpha = 0.85f),
+            navigationIconContentColor = Color(0xFF003366),
+            actionIconContentColor = Color(0xFF003366),
+            titleContentColor = Color(0xFF003366)
+        )
+    )
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -73,7 +133,7 @@ fun BluetoothScrn(navController: NavController) {
 
         // HEADER + SCAN BUTTON
         item {
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(60.dp))
             Text("Bluetooth Scanner")
             Spacer(modifier = Modifier.height(20.dp))
 
