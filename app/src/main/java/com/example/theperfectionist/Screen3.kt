@@ -6,13 +6,14 @@ import android.content.Intent
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,23 +30,44 @@ import androidx.navigation.NavController
 @Composable
 fun Screen3(navController: NavController) {
 
+    var showCalibration by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = { Screen3TopBar(navController) },
-        bottomBar = { BottomNavBar(navController) },
+        bottomBar = {
+            BottomNavBar(
+                navController = navController,
+                onCalibrateSelected = { showCalibration = true }
+            )
+        }
     ) { innerPadding ->
+
+        val context = LocalContext.current
+        val activity = context as? MainActivity
+        val bt = activity?.btManager
+        val connectedDevice = bt?.connectedDevice
 
         Box(
             Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(Color(0xFFA2CCFF).copy(alpha = 0.85f))
         ) {
-            Screen3Content(navController)
+
+            if (showCalibration && connectedDevice != null) {
+                CalibrationScrn(
+                    navController = navController,
+                    device = connectedDevice
+                )
+            } else {
+                Screen3Content(navController)
+            }
         }
     }
 }
 
-
+// ------------------------------------------------------------
+// TOP APP BAR
+// ------------------------------------------------------------
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Screen3TopBar(navController: NavController) {
@@ -53,12 +75,12 @@ fun Screen3TopBar(navController: NavController) {
     CenterAlignedTopAppBar(
         title = {
             Text(
-                text = "Settings",
+                text = "",
                 color = Color(0xFF003366),
                 style = MaterialTheme.typography.titleLarge
             )
         },
-        navigationIcon = {
+      /*  navigationIcon = {
             IconButton(onClick = { navController.navigate("screen_2") }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -66,7 +88,7 @@ fun Screen3TopBar(navController: NavController) {
                     tint = Color(0xFF003366)
                 )
             }
-        },
+        },*/
         actions = {
             var expanded by remember { mutableStateOf(false) }
 
@@ -89,7 +111,7 @@ fun Screen3TopBar(navController: NavController) {
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color(0xFFA2CCFF).copy(alpha = 0.85f),
+            containerColor = Color(0xFF8DBEF8).copy(alpha = 0.85f),  // Your unique top bar color
             navigationIconContentColor = Color(0xFF003366),
             actionIconContentColor = Color(0xFF003366),
             titleContentColor = Color(0xFF003366)
@@ -97,10 +119,15 @@ fun Screen3TopBar(navController: NavController) {
     )
 }
 
+// ------------------------------------------------------------
+// BOTTOM NAV BAR — WITH CORRECT BLUETOOTH LOGIC
+// ------------------------------------------------------------
 @Composable
-fun BottomNavBar(navController: NavController) {
+fun BottomNavBar(
+    navController: NavController,
+    onCalibrateSelected: () -> Unit
+) {
 
-    // Read context OUTSIDE onClick (fixes composable error)
     val context = LocalContext.current
     val activity = context as? MainActivity
     val bt = activity?.btManager
@@ -108,117 +135,50 @@ fun BottomNavBar(navController: NavController) {
     val connectedDevice = bt?.connectedDevice
 
     NavigationBar(
-        containerColor = Color(0xFFA2CCFF).copy(alpha = 0.85f)
+        containerColor = Color(0xFF8DBEF8).copy(alpha = 0.85f)
     ) {
-        val currentRoute = navController.currentBackStackEntry?.destination?.route
 
-        // CALIBRATE — WITH BLUETOOTH LOGIC
         NavigationBarItem(
-            selected = currentRoute?.startsWith("calibration") == true,
+            selected = false,
             onClick = {
                 if (isConnected && connectedDevice != null) {
-                    navController.navigate("calibration/${connectedDevice.address}")
+                    onCalibrateSelected()
                 } else {
                     navController.navigate("Bluetooth")
                 }
             },
-            icon = {},
+            icon = {Icon(imageVector = Icons.Filled.Check, contentDescription = "Analytics")},
             label = { Text("Calibrate", color = Color.DarkGray) }
         )
 
-        // TEMPLATE 1
         NavigationBarItem(
-            selected = currentRoute == "template1",
-            onClick = { navController.navigate("template1") },
-            icon = {},
-            label = { Text("Template 1", color = Color.DarkGray) }
+            selected = false,
+            onClick = { navController.navigate("template1") }, //Make a Chart screen to replace
+            icon = {Icon(imageVector = Icons.Filled.List, contentDescription = "Analytics")},
+            label = { Text("Chart Log", color = Color.DarkGray) }
         )
 
-        // TEMPLATE 2
         NavigationBarItem(
-            selected = currentRoute == "template2",
-            onClick = { navController.navigate("template2") },
-            icon = {},
-            label = { Text("Template 2", color = Color.DarkGray) }
+            selected = false,
+            onClick = { navController.navigate("template2") }, //Make a notification Screen
+            icon = {Icon(imageVector = Icons.Filled.Notifications, contentDescription = "Notifications") },
+            label = { Text("Notification", color = Color.DarkGray) }
         )
     }
 }
 
-
+// ------------------------------------------------------------
+// MAIN CONTENT OF SCREEN3
+// ------------------------------------------------------------
 @Composable
 fun Screen3Content(navController: NavController) {
-
-/*    val context = LocalContext.current
-    val activity = context as? MainActivity
-    val bt = activity?.btManager
-    val isConnected = bt?.isConnected == true
-    val connectedDevice = bt?.connectedDevice*/
-
-    val permissions = buildList {
-        add(Manifest.permission.ACCESS_FINE_LOCATION)
-        add(Manifest.permission.ACCESS_COARSE_LOCATION)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            add(Manifest.permission.BLUETOOTH_SCAN)
-            add(Manifest.permission.BLUETOOTH_CONNECT)
-        }
-    }.toTypedArray()
-
-    var permissionsGranted by remember { mutableStateOf(false) }
-
-    val enableBluetoothLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == android.app.Activity.RESULT_OK) {
-                navController.navigate("Bluetooth")
-            }
-        }
-
-    val permissionLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
-            permissionsGranted = results.values.all { it }
-            if (permissionsGranted) {
-                val enableIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                enableBluetoothLauncher.launch(enableIntent)
-            }
-        }
-
     Column(
-        Modifier.fillMaxSize(),
+        Modifier
+            .fillMaxSize()
+            .background(Color(0xFFA2CCFF).copy(alpha = 0.85f)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
-
-        /*
-        Button(
-            onClick = {
-                if (isConnected && connectedDevice != null) {
-                    navController.navigate("calibration/${connectedDevice.address}")
-                } else {
-                    navController.navigate("Bluetooth")
-                }
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC5).copy(alpha = 0.15f)),
-            shape = RoundedCornerShape(20.dp),
-            border = BorderStroke(2.dp, Color(0xFF009688).copy(alpha = 0.4f)),
-            elevation = null,
-            contentPadding = PaddingValues(16.dp)
-        ) {
-            Text(text = "Calibrate", color = Color.DarkGray)
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(
-            onClick = { permissionLauncher.launch(permissions) },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC5).copy(alpha = 0.15f)),
-            shape = RoundedCornerShape(20.dp),
-            border = BorderStroke(2.dp, Color(0xFF009688).copy(alpha = 0.4f)),
-            elevation = null,
-            contentPadding = PaddingValues(16.dp)
-        ) {
-            Text(text = "Bluetooth", color = Color.DarkGray)
-        }
-        */
 
         Text(
             text = "Select an option from the navigation bar below",

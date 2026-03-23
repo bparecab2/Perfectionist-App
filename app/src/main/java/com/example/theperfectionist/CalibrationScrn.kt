@@ -3,8 +3,10 @@ package com.example.theperfectionist
 import android.annotation.SuppressLint
 import android.bluetooth.*
 import android.content.Context
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,7 +27,7 @@ fun CalibrationScrn(
     onDisconnect: () -> Unit = {},     // Optional callback
     navController: NavController
 ) {
-    Box(Modifier.fillMaxSize().background(Color(0xFFE3F2FD).copy(alpha = 0.85f)))
+    Box(Modifier.fillMaxSize().background(Color(0xFFA2CCFF).copy(alpha = 0.85f)))
     val context = LocalContext.current
 
     // BLE UUIDs
@@ -113,19 +115,33 @@ fun CalibrationScrn(
     }
 
 
-        // === UI ===
+
         Column(
             modifier = Modifier.fillMaxSize().padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text("Calibration", style = MaterialTheme.typography.headlineSmall)
 
-                OutlinedButton(onClick = { disconnect() }) {
-                    Text("Disconnect")
+                OutlinedButton(onClick = { disconnect() },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC5).copy(alpha = 0.15f)),
+                    shape = RoundedCornerShape(20.dp),
+                    border = BorderStroke(2.dp, Color(0xFF009688).copy(alpha = 0.4f)),
+                    //elevation = ButtonDefaults.buttonElevation(8.dp),
+                    elevation = null,
+                    contentPadding = PaddingValues(16.dp)
+                ) {
+                    Text("Disconnect", color = Color.DarkGray)
                 }
-                Button(onClick = { navController.navigate("screen_3")}) {
-                    Text("Home")
-                }
+               /* Button(onClick = { navController.navigate("screen_3")},
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC5).copy(alpha = 0.15f)),
+                    shape = RoundedCornerShape(20.dp),
+                    border = BorderStroke(2.dp, Color(0xFF009688).copy(alpha = 0.4f)),
+                    //elevation = ButtonDefaults.buttonElevation(8.dp),
+                    elevation = null,
+                    contentPadding = PaddingValues(16.dp)
+                ) {
+                    Text("Home", color = Color.DarkGray)
+                }*/
 
             Text("Status: $status")
             Spacer(Modifier.height(8.dp))

@@ -43,7 +43,7 @@ fun BluetoothScrn(navController: NavController) {
     val isConnected = bt.isConnected // to check if the bluetooth is already connected
 
     if (isConnected) {
-        Column(Modifier.fillMaxSize(),
+        Column(Modifier.fillMaxSize()/*.background(Color(0xFFA2CCFF).copy(alpha = 0.85f))*/,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -53,6 +53,7 @@ fun BluetoothScrn(navController: NavController) {
         }
         return
     }
+
 
     var pairedDevices by remember { mutableStateOf(bt.getPairedDevices()?.toList() ?: emptyList<BluetoothDevice>()) }
     var availableDevices by remember { mutableStateOf(emptyList<BluetoothDevice>()) }
@@ -78,7 +79,7 @@ fun BluetoothScrn(navController: NavController) {
             )
         },
         navigationIcon = {
-            IconButton(onClick = { navController.navigate("screen_2") }) {
+            IconButton(onClick = { navController.navigate("screen_3") }) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
@@ -128,7 +129,7 @@ fun BluetoothScrn(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
         // HEADER + SCAN BUTTON
