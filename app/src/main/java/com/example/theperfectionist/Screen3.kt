@@ -102,7 +102,7 @@ fun Screen3TopBar(navController: NavController) {
                 onDismissRequest = { expanded = false }
             ) {
                 DropdownMenuItem(text = { Text("Account") }, onClick = { navController.navigate("Account") })
-                DropdownMenuItem(text = { Text("Wifi") }, onClick = { navController.navigate("WiFi") })
+                //DropdownMenuItem(text = { Text("Wifi") }, onClick = { navController.navigate("WiFi") })
                 DropdownMenuItem(text = { Text("Bluetooth") }, onClick = { navController.navigate("Bluetooth") })
                 DropdownMenuItem(text = { Text("Sound") }, onClick = { navController.navigate("Sound") })
             }
@@ -154,7 +154,7 @@ fun BottomNavBar(
             label = { Text("Chart Log", color = Color.DarkGray) }
         )
 
-        // TEMPLATE 2 — WITH NOTIFICATION BADGE
+
         NavigationBarItem(
             selected = false,
             onClick = { navController.navigate("template2") },
