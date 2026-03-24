@@ -7,6 +7,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -25,7 +28,8 @@ import androidx.navigation.compose.rememberNavController
 fun CalibrationScrn(
     device: BluetoothDevice,          // You pass this from BluetoothScrn
     onDisconnect: () -> Unit = {},     // Optional callback
-    navController: NavController
+    navController: NavController,
+    showHome: Boolean
 ) {
     Box(Modifier.fillMaxSize().background(Color(0xFFA2CCFF).copy(alpha = 0.85f)))
     val context = LocalContext.current
@@ -120,6 +124,24 @@ fun CalibrationScrn(
             modifier = Modifier.fillMaxSize().padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            /*if (showArrow){
+            IconButton(onClick = { navController.navigate("screen_3") }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Localized description"
+                )
+
+            }*/
+            if (showHome){
+                IconButton(onClick = { navController.navigate("screen_3") }) {
+                    Icon(
+                        imageVector = Icons.Filled.Home,
+                        contentDescription = "Localized description"
+                    )
+
+                }
+            }
+            else null
             Text("Calibration", style = MaterialTheme.typography.headlineSmall)
 
                 OutlinedButton(onClick = { disconnect() },

@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                     val adapter = BluetoothAdapter.getDefaultAdapter()
                     val device = adapter.getRemoteDevice(mac)
 
-                    CalibrationScrn(device = device, navController = navController)
+                    CalibrationScrn(device = device, navController = navController, showHome = true)
                 }
 
 

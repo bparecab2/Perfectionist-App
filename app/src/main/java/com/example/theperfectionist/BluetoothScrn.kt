@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,10 +71,10 @@ fun BluetoothScrn(navController: NavController) {
     }*/
 
     @OptIn(ExperimentalMaterial3Api::class)
-    TopAppBar(
+    CenterAlignedTopAppBar( //or replace this with just TopAppBar for regular (has the text on the left side)
         title = {
             Text(
-                text = "",
+                text = "Bluetooth Scanner",
                 color = Color(0xFF003366),
                 style = androidx.compose.material3.MaterialTheme.typography.titleLarge
             )
@@ -106,10 +107,10 @@ fun BluetoothScrn(navController: NavController) {
                     text = { Text("Account") },
                     onClick = { navController.navigate("Account") }
                 )
-                DropdownMenuItem(   //remove wifi section (most likely will not need it)
+/*                DropdownMenuItem(   //remove wifi section (most likely will not need it)
                     text = { Text("Wifi") },
                     onClick = { navController.navigate("WiFi") }
-                )
+                )*/
 
                 DropdownMenuItem(
                     text = { Text("Sound") },
@@ -135,7 +136,7 @@ fun BluetoothScrn(navController: NavController) {
         // HEADER + SCAN BUTTON
         item {
             Spacer(modifier = Modifier.height(60.dp))
-            Text("Bluetooth Scanner")
+            //Text("Bluetooth Scanner")
             Spacer(modifier = Modifier.height(20.dp))
 
             Button(onClick = {

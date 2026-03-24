@@ -23,9 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
-// ------------------------------------------------------------
-// MAIN SCREEN3 COMPOSABLE
-// ------------------------------------------------------------
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Screen3(navController: NavController) {
@@ -56,7 +54,8 @@ fun Screen3(navController: NavController) {
             if (showCalibration && connectedDevice != null) {
                 CalibrationScrn(
                     navController = navController,
-                    device = connectedDevice
+                    device = connectedDevice,
+                    showHome = false
                 )
             } else {
                 Screen3Content(navController)
@@ -65,9 +64,7 @@ fun Screen3(navController: NavController) {
     }
 }
 
-// ------------------------------------------------------------
-// TOP APP BAR
-// ------------------------------------------------------------
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Screen3TopBar(navController: NavController) {
@@ -119,9 +116,7 @@ fun Screen3TopBar(navController: NavController) {
     )
 }
 
-// ------------------------------------------------------------
-// BOTTOM NAV BAR — WITH CORRECT BLUETOOTH LOGIC
-// ------------------------------------------------------------
+
 @Composable
 fun BottomNavBar(
     navController: NavController,
@@ -133,6 +128,7 @@ fun BottomNavBar(
     val bt = activity?.btManager
     val isConnected = bt?.isConnected == true
     val connectedDevice = bt?.connectedDevice
+    var notificationCount by remember { mutableStateOf(0) } //the number value is the number of notifcation at start
 
     NavigationBar(
         containerColor = Color(0xFF8DBEF8).copy(alpha = 0.85f)
@@ -158,18 +154,34 @@ fun BottomNavBar(
             label = { Text("Chart Log", color = Color.DarkGray) }
         )
 
+        // TEMPLATE 2 — WITH NOTIFICATION BADGE
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate("template2") }, //Make a notification Screen
-            icon = {Icon(imageVector = Icons.Filled.Notifications, contentDescription = "Notifications") },
+            onClick = { navController.navigate("template2") },
+            icon = {
+                BadgedBox(
+                    badge = {
+                        if (notificationCount > 0) {
+                            Badge {
+                                Text(notificationCount.toString())
+                            }
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Notifications,
+                        contentDescription = "Notifications",
+                        tint = Color.DarkGray
+                    )
+                }
+            },
             label = { Text("Notification", color = Color.DarkGray) }
         )
+
     }
 }
 
-// ------------------------------------------------------------
-// MAIN CONTENT OF SCREEN3
-// ------------------------------------------------------------
+
 @Composable
 fun Screen3Content(navController: NavController) {
     Column(
