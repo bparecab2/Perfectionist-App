@@ -41,6 +41,7 @@ class MainActivity : ComponentActivity() {
                 composable("Account") { AccountScrn(navController) }
                 composable("WiFi") { WiFiScrn(navController) }
                 composable("Bluetooth") { BluetoothScrn(navController) }
+                composable("posture_history") { PostureHistoryScrn(navController) }
                 composable("Sound") { SoundScrn(navController) }
                 composable("calibration/{mac}") { backStack ->
                     val mac = backStack.arguments?.getString("mac")!!
