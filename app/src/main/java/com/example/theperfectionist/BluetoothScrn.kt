@@ -162,6 +162,19 @@ fun BluetoothScrn(navController: NavController) {
                 Text("Scan for Devices", color = Color.DarkGray)
             }
 
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(onClick = { navController.navigate("posture_history") },
+
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC5).copy(alpha = 0.15f)),
+                shape = RoundedCornerShape(20.dp),
+                border = BorderStroke(2.dp, Color(0xFF009688).copy(alpha = 0.4f)),
+                elevation = null,
+                contentPadding = PaddingValues(16.dp))
+            {
+                Text("View Saved Posture Graph", color = Color.DarkGray)
+            }
+
             Spacer(modifier = Modifier.height(20.dp))
             Text("Paired Devices")
         }

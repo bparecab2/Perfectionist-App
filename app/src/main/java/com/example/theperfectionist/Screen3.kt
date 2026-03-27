@@ -148,7 +148,7 @@ fun BottomNavBar(
         )
 
         NavigationBarItem(
-           selected = false,
+            selected = false,
             onClick = { navController.navigate("posture_history") }, //Make a Chart screen to replace
             icon = {Icon(imageVector = Icons.Filled.List, contentDescription = "Analytics")},
             label = { Text("Chart Log", color = Color.DarkGray) }
