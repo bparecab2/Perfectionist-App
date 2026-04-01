@@ -180,9 +180,7 @@ fun PostureHistoryScrn(navController: NavController) {
                     Button(
                         onClick = { refreshKey++ },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF03DAC5).copy(alpha = 0.35f)
-                        )
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC5).copy(alpha = 0.35f))
                     ) {
                         Text("Refresh", color = Color.DarkGray)
                     }
@@ -190,9 +188,7 @@ fun PostureHistoryScrn(navController: NavController) {
                     OutlinedButton(
                         onClick = { deleteDialogOpen = true },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = Color(0xFF7A0000)
-                        )
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF7A0000))
                     ) {
                         Text("Delete All Data")
                     }
@@ -207,13 +203,11 @@ fun PostureHistoryScrn(navController: NavController) {
             title = { Text("Delete posture data?") },
             text = { Text("This removes all saved posture samples from the phone.") },
             confirmButton = {
-                Button(
-                    onClick = {
-                        storage.clearAllSamples()
-                        refreshKey++
-                        deleteDialogOpen = false
-                    }
-                ) {
+                Button(onClick = {
+                    storage.clearAllSamples()
+                    refreshKey++
+                    deleteDialogOpen = false
+                }) {
                     Text("Delete")
                 }
             },
@@ -263,12 +257,9 @@ private fun EmptyChart() {
 
 @Composable
 private fun PostureLineChart(samples: List<PostureSample>) {
-    val sortedSamples = samples.sortedBy { it.timestamp }
-
-    val minTimestamp = sortedSamples.first().timestamp
-    val maxTimestamp = sortedSamples.last().timestamp
-    val timeRange = (maxTimestamp - minTimestamp).coerceAtLeast(1L)
-    val maxScore = max(sortedSamples.maxOf { it.score }, 1f)
+    val minTimestamp = samples.first().timestamp.toFloat()
+    val maxTimestamp = samples.last().timestamp.toFloat()
+    val maxScore = max(samples.maxOf { it.score }, 1f)
     val timeFormatter = remember { SimpleDateFormat("h:mm a", Locale.getDefault()) }
 
     Column {
@@ -287,6 +278,7 @@ private fun PostureLineChart(samples: List<PostureSample>) {
             val usableWidth = width - leftPad - 12f
             val usableHeight = height - topPad - bottomPad
 
+            // axes
             drawLine(
                 color = Color.Gray,
                 start = Offset(leftPad, topPad),
@@ -302,6 +294,7 @@ private fun PostureLineChart(samples: List<PostureSample>) {
                 cap = StrokeCap.Round
             )
 
+            // guide lines
             repeat(4) { index ->
                 val y = topPad + (usableHeight / 4f) * index
                 drawLine(
@@ -313,9 +306,12 @@ private fun PostureLineChart(samples: List<PostureSample>) {
             }
 
             val path = Path()
-            sortedSamples.forEachIndexed { index, sample ->
-                val xRatio =
-                    ((sample.timestamp - minTimestamp).toDouble() / timeRange.toDouble()).toFloat()
+            samples.forEachIndexed { index, sample ->
+                val xRatio = if (maxTimestamp == minTimestamp) {
+                    0f
+                } else {
+                    (sample.timestamp - minTimestamp) / (maxTimestamp - minTimestamp)
+                }
                 val yRatio = sample.score / maxScore
 
                 val x = leftPad + usableWidth * xRatio
@@ -338,25 +334,12 @@ private fun PostureLineChart(samples: List<PostureSample>) {
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = timeFormatter.format(Date(sortedSamples.first().timestamp)),
-                color = Color.DarkGray
-            )
-            Text(
-                text = timeFormatter.format(Date(sortedSamples.last().timestamp)),
-                color = Color.DarkGray
-            )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Text(timeFormatter.format(Date(samples.first().timestamp)), color = Color.DarkGray)
+            Text(timeFormatter.format(Date(samples.last().timestamp)), color = Color.DarkGray)
         }
-
         Spacer(modifier = Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             LegendChip(label = "Good", color = Color(0xFF2E7D32))
             LegendChip(label = "Watch", color = Color(0xFFF9A825))
             LegendChip(label = "Bad", color = Color(0xFFC62828))
