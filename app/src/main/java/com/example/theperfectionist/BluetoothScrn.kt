@@ -194,7 +194,7 @@ fun BluetoothScrn(navController: NavController) {
 
         items(availableDevices) { device ->
             DeviceCard(device.name ?: "Unknown", device.address) {
-                navController.navigate("calibration/${device.address}")
+                navController.navigate("stand_normal/${device.address}")
             }
         }
 
@@ -206,7 +206,7 @@ fun BluetoothScrn(navController: NavController) {
 
         items(bleDevices) { device ->
             DeviceCard(device.name ?: "Unknown BLE Device", device.address) {
-                navController.navigate("calibration/${device.address}")
+                navController.navigate("stand_normal/${device.address}")
             }
         }
     }

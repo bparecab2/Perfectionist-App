@@ -79,6 +79,30 @@ class MainActivity : ComponentActivity() {
                     composable("Bluetooth") { BluetoothScrn(navController) }
                     composable("posture_history") { PostureHistoryScrn(navController) }
                     composable("Sound") { SoundScrn(navController) }
+
+                    composable("stand_normal/{mac}") { backStack ->
+                        val mac = backStack.arguments?.getString("mac")!!
+                        StandNormal(navController = navController, mac = mac)
+                    }
+
+                    composable("stand_ideal/{mac}") { backStack ->
+                        val mac = backStack.arguments?.getString("mac")!!
+                        StandIdeal(navController = navController, mac = mac)
+                    }
+
+                    composable("sit_relaxed/{mac}") { backStack ->
+                        val mac = backStack.arguments?.getString("mac")!!
+                        SitNormal(navController = navController, mac = mac)
+                    }
+
+                    composable("sit_ideal/{mac}") { backStack ->
+                        val mac = backStack.arguments?.getString("mac")!!
+                        SitIdeal(navController = navController, mac = mac)
+                    }
+
+
+
+
                     composable("calibration/{mac}") { backStack ->
                         val mac = backStack.arguments?.getString("mac")!!
                         val adapter = BluetoothAdapter.getDefaultAdapter()
