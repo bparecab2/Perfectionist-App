@@ -185,12 +185,12 @@ fun PostureHistoryScrn(navController: NavController) {
                         Text("Refresh", color = Color.DarkGray)
                     }
 
-                    OutlinedButton(
+                    Button(
                         onClick = { deleteDialogOpen = true },
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF7A0000))
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7A0000))
                     ) {
-                        Text("Delete All Data")
+                        Text("Delete All Data", color = Color.Black)
                     }
                 }
             }

@@ -6,7 +6,9 @@ import android.content.Intent
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -20,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
@@ -44,6 +47,7 @@ fun Screen3(navController: NavController) {
         val activity = context as? MainActivity
         val bt = activity?.btManager
         val connectedDevice = bt?.connectedDevice
+
 
         Box(
             Modifier
@@ -72,7 +76,7 @@ fun Screen3TopBar(navController: NavController) {
     CenterAlignedTopAppBar(
         title = {
             Text(
-                text = "",
+                text = "The Perfectionist",
                 color = Color(0xFF003366),
                 style = MaterialTheme.typography.titleLarge
             )
@@ -104,7 +108,7 @@ fun Screen3TopBar(navController: NavController) {
                 DropdownMenuItem(text = { Text("Account") }, onClick = { navController.navigate("Account") })
                 //DropdownMenuItem(text = { Text("Wifi") }, onClick = { navController.navigate("WiFi") })
                 DropdownMenuItem(text = { Text("Bluetooth") }, onClick = { navController.navigate("Bluetooth") })
-                DropdownMenuItem(text = { Text("Sound") }, onClick = { navController.navigate("Sound") })
+                //DropdownMenuItem(text = { Text("Sound") }, onClick = { navController.navigate("Sound") })
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -157,7 +161,7 @@ fun BottomNavBar(
 
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate("template2") },
+            onClick = { navController.navigate("notification_settings") },
             icon = {
                 BadgedBox(
                     badge = {
@@ -196,5 +200,45 @@ fun Screen3Content(navController: NavController) {
             text = "Select an option from the navigation bar below",
             color = Color.DarkGray
         )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun NotificationBellItem(
+    modifier: Modifier = Modifier,
+    isMuted: Boolean,
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
+            .padding(vertical = 12.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Default.Notifications,
+                contentDescription = "Notifications",
+                tint = if (isMuted)
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f)
+                else
+                    MaterialTheme.colorScheme.onSurface
+            )
+
+            Text(
+                text = if (isMuted) "Muted" else "Noti",
+                textAlign = TextAlign.Center,
+                color = if (isMuted)
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                else
+                    MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 }

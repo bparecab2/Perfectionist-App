@@ -18,12 +18,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 
 
 @Composable
 fun Screen1(navController: NavController)
 {
+    val context = LocalContext.current
+    val passwordManager = PasswordManager(context)
+    val isDark = (context as MainActivity).isDarkMode
+
+
     Box(Modifier.fillMaxSize().background(Color(0xFFA2CCFF).copy(alpha = 0.85f)))
 
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center)
@@ -33,7 +39,12 @@ fun Screen1(navController: NavController)
 
         Button(onClick =
             {
-            navController.navigate("screen_2")
+
+                if (passwordManager.hasPassword()) {
+                    navController.navigate("password")
+                } else {
+                    navController.navigate("screen_2")
+                }
             },
 
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC5).copy(alpha = 0.15f)),
