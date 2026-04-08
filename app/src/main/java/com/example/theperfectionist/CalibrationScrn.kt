@@ -123,7 +123,9 @@ fun CalibrationScrn(
 
                 roll = String.format("%.2f", parsed.roll)
                 pitch = String.format("%.2f", parsed.pitch)
-                posture = parsed.posture?.toString() ?: "--"
+                //posture = parsed.posture?.toString() ?: "--"
+                posture = postureLabel(parsed.posture)
+
                 scoreText = String.format("%.2f", parsed.score)
 
                 val now = System.currentTimeMillis()
@@ -217,6 +219,14 @@ private data class ParsedBleReading(
     val posture: Int?,
     val score: Float
 )
+private fun postureLabel(value: Int?): String {
+    return when (value) {
+        1 -> "Good"
+        0 -> "Bad"
+        2 -> "Watch"
+        else -> "--"
+    }
+}
 
 private fun parseIncomingPayload(text: String): ParsedBleReading? {
     val parts = text.split(",")
@@ -227,7 +237,17 @@ private fun parseIncomingPayload(text: String): ParsedBleReading? {
         parts.size >= 3 -> {
             val roll = parts[0].toFloatOrNull() ?: return null
             val pitch = parts[1].toFloatOrNull() ?: return null
-            val posture = parts[2].toIntOrNull()
+            //val posture = parts[2].toIntOrNull()
+            val postureRaw = parts[2].lowercase()
+
+            val posture = when {
+                postureRaw.toIntOrNull() != null -> postureRaw.toInt()
+                postureRaw == "good" -> 1
+                postureRaw == "bad" -> 0
+                postureRaw == "watch" -> 2
+                else -> null
+            }
+
             val score = sqrt((roll * roll) + (pitch * pitch))
             ParsedBleReading(roll = roll, pitch = pitch, posture = posture, score = score)
         }
