@@ -21,7 +21,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
@@ -38,9 +37,6 @@ fun Screen2(navController: NavController) {
             add(Manifest.permission.BLUETOOTH_CONNECT)
         }
     }.toTypedArray()
-
-    val context = LocalContext.current
-    val passwordManager = PasswordManager(context)
 
     var permissionsGranted by remember { mutableStateOf(false) }
 
@@ -75,11 +71,6 @@ fun Screen2(navController: NavController) {
 
         Button(onClick = {
             permissionLauncher.launch(permissions)
-
-            if(!passwordManager.hasPassword()) {
-                navController.navigate("set_password")
-            }
-
         },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC5).copy(alpha = 0.15f)),
             shape = RoundedCornerShape(20.dp),

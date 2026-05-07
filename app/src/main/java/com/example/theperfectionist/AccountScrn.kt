@@ -1,48 +1,33 @@
 package com.example.theperfectionist
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
 fun AccountScrn(navController: NavController) {
-    val activity = LocalContext.current as MainActivity
-    val isDark = activity.isDarkMode
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 20.dp, vertical = 16.dp)
+            .background(AppThemeState.backgroundColor)
+            .statusBarsPadding()
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -50,88 +35,109 @@ fun AccountScrn(navController: NavController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 40.dp),
+                    .padding(start = 24.dp, top = 24.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+
+                // ✅ FIXED BACK BUTTON
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.onBackground
+                        tint = AppThemeState.textColor
                     )
                 }
 
                 Text(
                     text = "Account",
                     style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = AppThemeState.textColor
                 )
             }
 
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(70.dp))
 
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp)
+                    .shadow(
+                        elevation = 10.dp,
+                        shape = RoundedCornerShape(24.dp)
+                    ),
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                border = if (!isDark) {
-                    BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.35f))
-                } else {
-                    null
-                }
+                    containerColor = AppThemeState.cardColor
+                )
             ) {
                 Column(
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    SettingsActionRow(
+
+                    AccountRow(
                         icon = {
                             Icon(
                                 imageVector = Icons.Filled.Lock,
                                 contentDescription = "Change Password",
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = AppThemeState.purpleColor
                             )
                         },
                         title = "Change Password",
                         subtitle = "Update your 6-digit PIN",
-                        onClick = { navController.navigate("change_password") }
+                        onClick = {
+                            navController.navigate("change_password")
+                        }
                     )
 
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-                    )
+                    Divider(color = AppThemeState.subTextColor.copy(alpha = 0.25f))
 
-                    SettingsSwitchRow(
+                    AccountRow(
                         icon = {
                             Icon(
                                 imageVector = Icons.Filled.Settings,
                                 contentDescription = "Dark Mode",
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = AppThemeState.purpleColor
                             )
                         },
                         title = "Dark Mode",
                         subtitle = "Switch the app appearance",
-                        checked = activity.isDarkMode,
-                        onCheckedChange = { activity.isDarkMode = it }
+                        trailing = {
+                            Switch(
+                                checked = AppThemeState.darkMode,
+                                onCheckedChange = {
+                                    AppThemeState.setDarkMode(context, it)
+                                },
+                                colors = SwitchDefaults.colors(
+                                    checkedThumbColor = Color(0xFF009688),
+                                    checkedTrackColor = Color(0xFFEADCF8),
+                                    uncheckedThumbColor = Color.Gray,
+                                    uncheckedTrackColor = Color(0xFFEADCF8)
+                                )
+                            )
+                        },
+                        onClick = {
+                            AppThemeState.setDarkMode(
+                                context,
+                                !AppThemeState.darkMode
+                            )
+                        }
                     )
 
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
-                    )
+                    Divider(color = AppThemeState.subTextColor.copy(alpha = 0.25f))
 
-                    SettingsActionRow(
+                    AccountRow(
                         icon = {
                             Icon(
                                 imageVector = Icons.Filled.Info,
                                 contentDescription = "User Manual",
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = AppThemeState.purpleColor
                             )
                         },
                         title = "User Manual",
                         subtitle = "Read how to use the app",
-                        onClick = { navController.navigate("user_manual") }
+                        onClick = {
+                            navController.navigate("user_manual")
+                        }
                     )
                 }
             }
@@ -140,62 +146,28 @@ fun AccountScrn(navController: NavController) {
 }
 
 @Composable
-private fun SettingsActionRow(
+fun AccountRow(
     icon: @Composable () -> Unit,
     title: String,
     subtitle: String,
+    trailing: @Composable (() -> Unit)? = null,
     onClick: () -> Unit
-) {
-    Surface(
-        onClick = onClick,
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 0.dp
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 18.dp, vertical = 18.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            icon()
-
-            Spacer(modifier = Modifier.padding(horizontal = 8.dp))
-
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun SettingsSwitchRow(
-    icon: @Composable () -> Unit,
-    title: String,
-    subtitle: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 18.dp, vertical = 18.dp),
+            .height(88.dp)
+            .clickable { onClick() }
+            .padding(horizontal = 20.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        icon()
 
-        Spacer(modifier = Modifier.padding(horizontal = 8.dp))
+        Box(
+            modifier = Modifier.width(40.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            icon()
+        }
 
         Column(
             modifier = Modifier.weight(1f)
@@ -203,18 +175,18 @@ private fun SettingsSwitchRow(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = AppThemeState.textColor
             )
+
             Text(
                 text = subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                style = MaterialTheme.typography.bodyMedium,
+                color = AppThemeState.subTextColor
             )
         }
 
-        Switch(
-            checked = checked,
-            onCheckedChange = onCheckedChange
-        )
+        if (trailing != null) {
+            trailing()
+        }
     }
 }

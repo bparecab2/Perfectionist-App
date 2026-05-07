@@ -2,10 +2,23 @@ package com.example.theperfectionist
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,43 +30,70 @@ import kotlinx.coroutines.delay
 fun SitNormal(navController: NavController, mac: String) {
     var isRecording by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
-    Box(Modifier.fillMaxSize().background(Color(0xFFA2CCFF).copy(alpha = 0.85f)))
+
     Column(
-        modifier = Modifier.fillMaxSize().padding(20.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(AppThemeState.backgroundColor)
+            .padding(20.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Sitting Relaxed", style = MaterialTheme.typography.headlineMedium)
+        Text(
+            text = "Sitting Relaxed",
+            style = MaterialTheme.typography.headlineMedium,
+            color = AppThemeState.textColor
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text("Sit on a chair all the way back in a relaxed position like you normally do.")
+        Text(
+            text = "Sit on a chair all the way back in a relaxed position like you normally do.",
+            color = AppThemeState.textColor
+        )
 
         Spacer(modifier = Modifier.height(40.dp))
 
         Button(
             onClick = {
-                isRecording = true
-                message = "Recording..."
+                if (!isRecording) {
+                    isRecording = true
+                    message = "Connected. Sending C. Recording sitting normal for 8 seconds..."
+                }
             },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC5).copy(alpha = 0.15f)),
+            enabled = true,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isRecording) Color(0xFF777777) else AppThemeState.buttonColor,
+                contentColor = Color.White
+            ),
             shape = RoundedCornerShape(20.dp),
-            border = BorderStroke(2.dp, Color(0xFF009688).copy(alpha = 0.4f)),
-            elevation = null,
-            contentPadding = PaddingValues(16.dp),
-            enabled = !isRecording
+            border = BorderStroke(2.dp, AppThemeState.buttonBorderColor)
         ) {
-            Text("Start Recording", color = Color.DarkGray)
+            Text(
+                text = "Start Recording",
+                color = Color.White
+            )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-        Text(message)
+
+        Text(
+            text = message,
+            color = AppThemeState.subTextColor
+        )
 
         if (isRecording) {
             LaunchedEffect(Unit) {
+                val ok = sendBleCommand("C")
+
+                if (!ok) {
+                    message = "Failed to send C. Recording sitting normal for 8 seconds"
+                }
+
                 delay(8000)
                 message = "Recording Complete"
                 delay(100)
+
                 navController.navigate("sit_ideal/$mac")
                 isRecording = false
             }

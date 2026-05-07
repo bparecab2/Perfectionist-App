@@ -1,3 +1,5 @@
+//BluetoothManager
+
 package com.example.theperfectionist
 
 import android.annotation.SuppressLint

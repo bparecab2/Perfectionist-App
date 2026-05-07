@@ -22,16 +22,16 @@ import androidx.navigation.NavController
 fun PasswordScrn(navController: NavController) {
     val context = LocalContext.current
     val passwordManager = remember { PasswordManager(context) }
-    val activity = context as MainActivity
-    val btManager = activity.btManager
 
     var pin by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
 
     LaunchedEffect(pin) {
         if (pin.length == 6) {
-            val savedPin = passwordManager.getPassword()
-            if (pin == savedPin) {
+            if (pin == passwordManager.getPassword()) {
+                val activity = context as MainActivity
+                val btManager = activity.btManager
+
                 if (btManager.isConnected && btManager.connectedDevice != null) {
                     navController.navigate("screen_3") {
                         popUpTo("password") { inclusive = true }
@@ -42,7 +42,7 @@ fun PasswordScrn(navController: NavController) {
                     }
                 }
             } else {
-                error = "Incorrect PIN"
+                error = "Wrong PIN"
                 pin = ""
             }
         }
@@ -51,27 +51,33 @@ fun PasswordScrn(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(AppThemeState.backgroundColor)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Enter PIN", color = MaterialTheme.colorScheme.onBackground)
+        Text(
+            text = "Enter Your PIN",
+            color = AppThemeState.textColor,
+            style = MaterialTheme.typography.headlineSmall
+        )
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+        Row(horizontalArrangement = Arrangement.Center) {
             repeat(6) { index ->
                 val filled = index < pin.length
+
                 Box(
                     modifier = Modifier
                         .size(20.dp)
-                        .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                        .border(2.dp, AppThemeState.purpleColor, CircleShape)
                         .background(
-                            color = if (filled) MaterialTheme.colorScheme.primary else Color.Transparent,
+                            color = if (filled) AppThemeState.purpleColor else Color.Transparent,
                             shape = CircleShape
                         )
                 )
+
                 if (index < 5) Spacer(modifier = Modifier.width(12.dp))
             }
         }
@@ -109,25 +115,36 @@ private fun PasswordPinPad(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(22.dp)
+        verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         PasswordPinRow(listOf("1", "2", "3"), onDigitPressed)
         PasswordPinRow(listOf("4", "5", "6"), onDigitPressed)
         PasswordPinRow(listOf("7", "8", "9"), onDigitPressed)
 
-        Row(horizontalArrangement = Arrangement.spacedBy(22.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Spacer(modifier = Modifier.size(85.dp))
 
-            PasswordPinButton(text = "0") { onDigitPressed("0") }
+            PasswordPinButton(text = "0") {
+                onDigitPressed("0")
+            }
 
             Button(
                 onClick = onDeletePressed,
                 modifier = Modifier.size(85.dp),
                 shape = CircleShape,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent
+                ),
+                border = BorderStroke(1.5.dp, AppThemeState.purpleColor)
             ) {
-                Text("⌫", color = MaterialTheme.colorScheme.primary, fontSize = 22.sp)
+                Text(
+                    text = "⌫",
+                    color = AppThemeState.purpleColor,
+                    fontSize = 22.sp
+                )
             }
         }
     }
@@ -138,9 +155,14 @@ private fun PasswordPinRow(
     digits: List<String>,
     onDigitPressed: (String) -> Unit
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(22.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         digits.forEach { digit ->
-            PasswordPinButton(text = digit) { onDigitPressed(digit) }
+            PasswordPinButton(text = digit) {
+                onDigitPressed(digit)
+            }
         }
     }
 }
@@ -154,9 +176,15 @@ private fun PasswordPinButton(
         onClick = onClick,
         modifier = Modifier.size(85.dp),
         shape = CircleShape,
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Transparent
+        ),
+        border = BorderStroke(1.5.dp, AppThemeState.purpleColor)
     ) {
-        Text(text = text, color = MaterialTheme.colorScheme.primary, fontSize = 24.sp)
+        Text(
+            text = text,
+            color = AppThemeState.purpleColor,
+            fontSize = 24.sp
+        )
     }
 }

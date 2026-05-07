@@ -166,7 +166,7 @@ static void recordPrototype8s(PrototypeVec &P, const char *label, bool recordMot
   }
 
   if (n < 5) {
-    Serial.println("Not enough IMU samples captured. Try again.");
+    Serial.println("⚠️ Not enough IMU samples captured. Try again.");
     return;
   }
 
@@ -179,23 +179,23 @@ static void recordPrototype8s(PrototypeVec &P, const char *label, bool recordMot
   }
   P.ready = true;
 
-  Serial.print("Recorded "); Serial.print(label);
+  Serial.print("✅ Recorded "); Serial.print(label);
   Serial.print(" prototype. Samples="); Serial.println(n);
 
   if (recordMotionToo) {
     motion_threshold = maxStillMotion * 2.0f;
-    Serial.print("motion_threshold (auto from IDEAL stillness) = ");
+    Serial.print("✅ motion_threshold (auto from IDEAL stillness) = ");
     Serial.println(motion_threshold, 2);
   }
 }
 
 static void liveStepOnce() {
   if (!P_normal.ready || !P_ideal.ready) {
-    Serial.println("Record BOTH prototypes first: N then I");
+    Serial.println("⚠️ Record BOTH prototypes first: N then I");
     return;
   }
   if (motion_threshold > 900.0f) {
-    Serial.println("Motion threshold not set yet. Press I to record IDEAL (it auto-sets motion).");
+    Serial.println("⚠️ Motion threshold not set yet. Press I to record IDEAL (it auto-sets motion).");
     return;
   }
 
@@ -206,7 +206,7 @@ static void liveStepOnce() {
   float motion = readCurrentMotion();
   motionHigh = (motion > motion_threshold);
   if (motionHigh) {
-  Serial.println("High motion → vibration blocked");
+  Serial.println("🚫 High motion → vibration blocked");
 }
 
   float dIdeal = normDist4(x, P_ideal);
@@ -227,7 +227,7 @@ static void liveStepOnce() {
       else if (now - badStart >= BAD_HOLD_MS) {
         state = VIBRATING;
         setVibration(true);
-        Serial.println("VIBRATION");  // <-- what you asked for
+        Serial.println("🔔 VIBRATION");  // <-- what you asked for
       }
       break;
 
@@ -236,7 +236,7 @@ static void liveStepOnce() {
       setVibration(false);
       state = COOLDOWN;
       cooldownStart = now;
-      Serial.println("COOLDOWN started (7s)");
+      Serial.println("🧊 COOLDOWN started (7s)");
       break;
 
     case COOLDOWN:
@@ -264,11 +264,11 @@ void setup() {
   setVibration(false);
 
   if (!IMU.begin()) {
-    Serial.println("IMU init failed. Check Arduino_LSM6DS3 + board selection.");
+    Serial.println("❌ IMU init failed. Check Arduino_LSM6DS3 + board selection.");
     while(1) {}
   }
 
-  Serial.println("IMU OK");
+  Serial.println("✅ IMU OK");
   Serial.println("=== 1-Sensor Posture ML (LIVE IMU) ===");
   Serial.println("Commands: N=Normal, I=Ideal(+motion), L=Live ON, S=Live OFF");
 }

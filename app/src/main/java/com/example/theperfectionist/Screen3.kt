@@ -1,17 +1,11 @@
 package com.example.theperfectionist
 
-import android.Manifest
-import android.bluetooth.BluetoothAdapter
-import android.content.Intent
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.MoreVert
@@ -22,74 +16,56 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Screen3(navController: NavController) {
+    val context = LocalContext.current
 
-    var showCalibration by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        PostureNotificationHelper.createChannel(context)
+    }
+
+    LaunchedEffect(Unit) {
+        var previousState = ""
+
+        while (true) {
+            val currentState = BleLiveData.postureStateText
+
+            if (
+                currentState.equals("VIBRATING", ignoreCase = true) &&
+                !previousState.equals("VIBRATING", ignoreCase = true)
+            ) {
+                PostureNotificationHelper.showBadPostureNotification(context)
+            }
+
+            previousState = currentState
+            delay(100)
+        }
+    }
 
     Scaffold(
         topBar = { Screen3TopBar(navController) },
-        bottomBar = {
-            BottomNavBar(
-                navController = navController,
-                onCalibrateSelected = { showCalibration = true }
-            )
-        }
+        bottomBar = { BottomNavBar(navController) }
     ) { innerPadding ->
-
-        val context = LocalContext.current
-        val activity = context as? MainActivity
-        val bt = activity?.btManager
-        val connectedDevice = bt?.connectedDevice
-
-
         Box(
             Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-
-            if (showCalibration && connectedDevice != null) {
-                CalibrationScrn(
-                    navController = navController,
-                    device = connectedDevice,
-                    showHome = false
-                )
-            } else {
-                Screen3Content(navController)
-            }
+            Screen3Content(navController)
         }
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Screen3TopBar(navController: NavController) {
-
     CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = "The Perfectionist",
-                color = Color(0xFF003366),
-                style = MaterialTheme.typography.titleLarge
-            )
-        },
-      /*  navigationIcon = {
-            IconButton(onClick = { navController.navigate("screen_2") }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color(0xFF003366)
-                )
-            }
-        },*/
+        title = { Text("") },
         actions = {
             var expanded by remember { mutableStateOf(false) }
 
@@ -97,7 +73,7 @@ fun Screen3TopBar(navController: NavController) {
                 Icon(
                     imageVector = Icons.Default.MoreVert,
                     contentDescription = "More options",
-                    tint = Color(0xFF003366)
+                    tint = AppThemeState.textColor
                 )
             }
 
@@ -105,140 +81,191 @@ fun Screen3TopBar(navController: NavController) {
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                DropdownMenuItem(text = { Text("Account") }, onClick = { navController.navigate("Account") })
-                //DropdownMenuItem(text = { Text("Wifi") }, onClick = { navController.navigate("WiFi") })
-                DropdownMenuItem(text = { Text("Bluetooth") }, onClick = { navController.navigate("Bluetooth") })
-                //DropdownMenuItem(text = { Text("Sound") }, onClick = { navController.navigate("Sound") })
+                DropdownMenuItem(
+                    text = { Text("Account") },
+                    onClick = {
+                        expanded = false
+                        navController.navigate("Account")
+                    }
+                )
             }
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color(0xFF8DBEF8).copy(alpha = 0.85f),  // Your unique top bar color
-            navigationIconContentColor = Color(0xFF003366),
-            actionIconContentColor = Color(0xFF003366),
-            titleContentColor = Color(0xFF003366)
+            containerColor = AppThemeState.topBarColor,
+            actionIconContentColor = AppThemeState.textColor
         )
     )
 }
 
-
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BottomNavBar(
-    navController: NavController,
-    onCalibrateSelected: () -> Unit
-) {
-
+fun BottomNavBar(navController: NavController) {
     val context = LocalContext.current
-    val activity = context as? MainActivity
-    val bt = activity?.btManager
-    val isConnected = bt?.isConnected == true
-    val connectedDevice = bt?.connectedDevice
-    var notificationCount by remember { mutableStateOf(0) } //the number value is the number of notifcation at start
+    val activity = context as MainActivity
+    val bt = activity.btManager
+
+    val mac = bt.connectedDevice?.address ?: ""
+
+    var notificationCount by remember { mutableStateOf(0) }
+    var confirmCalibrate by remember { mutableStateOf(false) }
+
+    LaunchedEffect(confirmCalibrate) {
+        if (confirmCalibrate) {
+            delay(3000)
+            confirmCalibrate = false
+        }
+    }
 
     NavigationBar(
-        containerColor = Color(0xFF8DBEF8).copy(alpha = 0.85f)
+        containerColor = AppThemeState.topBarColor
     ) {
+        NavigationBarItem(
+            selected = false,
+            onClick = {
+                if (mac.isEmpty()) return@NavigationBarItem
+
+                if (!confirmCalibrate) {
+                    confirmCalibrate = true
+                } else {
+                    val storage = PostureStorage(context)
+                    storage.clearAllSamples()
+
+                    sendBleCommand("S")
+                    navController.navigate("stand_normal/$mac")
+
+                    confirmCalibrate = false
+                }
+            },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = "Calibrate",
+                    tint = AppThemeState.subTextColor
+                )
+            },
+            label = {
+                if (confirmCalibrate) {
+                    Box(
+                        modifier = Modifier
+                            .background(Color.Red, RoundedCornerShape(12.dp))
+                            .padding(horizontal = 10.dp, vertical = 3.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "Confirm",
+                            color = Color.Black,
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    }
+                } else {
+                    Text("Calibrate", color = AppThemeState.subTextColor)
+                }
+            }
+        )
 
         NavigationBarItem(
             selected = false,
             onClick = {
-                if (isConnected && connectedDevice != null) {
-                    onCalibrateSelected()
-                } else {
-                    navController.navigate("Bluetooth")
-                }
+                confirmCalibrate = false
+                navController.navigate("posture_history")
             },
-            icon = {Icon(imageVector = Icons.Filled.Check, contentDescription = "Analytics")},
-            label = { Text("Calibrate", color = Color.DarkGray) }
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.List,
+                    contentDescription = "Chart Log",
+                    tint = AppThemeState.subTextColor
+                )
+            },
+            label = { Text("Chart Log", color = AppThemeState.subTextColor) }
         )
 
         NavigationBarItem(
             selected = false,
-            onClick = { navController.navigate("posture_history") }, //Make a Chart screen to replace
-            icon = {Icon(imageVector = Icons.Filled.List, contentDescription = "Analytics")},
-            label = { Text("Chart Log", color = Color.DarkGray) }
-        )
-
-
-        NavigationBarItem(
-            selected = false,
-            onClick = { navController.navigate("notification_settings") },
+            onClick = {
+                confirmCalibrate = false
+                navController.navigate("notification_settings")
+            },
             icon = {
                 BadgedBox(
                     badge = {
                         if (notificationCount > 0) {
-                            Badge {
-                                Text(notificationCount.toString())
-                            }
+                            Badge { Text(notificationCount.toString()) }
                         }
                     }
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.Notifications,
-                        contentDescription = "Notifications",
-                        tint = Color.DarkGray
-                    )
+                    Box(
+                        modifier = Modifier.combinedClickable(
+                            onClick = {
+                                confirmCalibrate = false
+                                navController.navigate("notification_settings")
+                            },
+                            onLongClick = {
+                                confirmCalibrate = false
+                                NotificationSettingsState.toggleSleepMode()
+                            }
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Notifications,
+                            contentDescription = "Notifications",
+                            tint = if (NotificationSettingsState.sleepMode) {
+                                Color.Red
+                            } else {
+                                AppThemeState.subTextColor
+                            }
+                        )
+                    }
                 }
             },
-            label = { Text("Notification", color = Color.DarkGray) }
+            label = { Text("Notification", color = AppThemeState.subTextColor) }
         )
-
     }
 }
-
 
 @Composable
 fun Screen3Content(navController: NavController) {
     Column(
         Modifier
             .fillMaxSize()
-            .background(Color(0xFFA2CCFF).copy(alpha = 0.85f)),
+            .background(AppThemeState.backgroundColor)
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Text(
+            text = "Live Posture Data",
+            style = MaterialTheme.typography.headlineMedium,
+            color = AppThemeState.textColor
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Text("Status: ${BleLiveData.status}", color = AppThemeState.subTextColor)
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Select an option from the navigation bar below",
-            color = Color.DarkGray
+            "Roll: ${BleLiveData.roll}°",
+            style = MaterialTheme.typography.headlineSmall,
+            color = AppThemeState.subTextColor
         )
-    }
-}
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun NotificationBellItem(
-    modifier: Modifier = Modifier,
-    isMuted: Boolean,
-    onClick: () -> Unit,
-    onLongClick: () -> Unit
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .combinedClickable(
-                onClick = onClick,
-                onLongClick = onLongClick
-            )
-            .padding(vertical = 12.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(
-                imageVector = Icons.Default.Notifications,
-                contentDescription = "Notifications",
-                tint = if (isMuted)
-                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f)
-                else
-                    MaterialTheme.colorScheme.onSurface
-            )
+        Text(
+            "Pitch: ${BleLiveData.pitch}°",
+            style = MaterialTheme.typography.headlineSmall,
+            color = AppThemeState.subTextColor
+        )
 
-            Text(
-                text = if (isMuted) "Muted" else "Noti",
-                textAlign = TextAlign.Center,
-                color = if (isMuted)
-                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                else
-                    MaterialTheme.colorScheme.onSurface
-            )
-        }
+        Text(
+            "Family: ${BleLiveData.familyText}",
+            style = MaterialTheme.typography.headlineSmall,
+            color = AppThemeState.subTextColor
+        )
+
+        Text(
+            "Posture: ${BleLiveData.postureStateText}",
+            style = MaterialTheme.typography.headlineSmall,
+            color = AppThemeState.subTextColor
+        )
     }
 }

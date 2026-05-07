@@ -1,131 +1,137 @@
 package com.example.theperfectionist
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+
+object NotificationSettingsState {
+    var soundLevel by mutableFloatStateOf(1f)
+    var vibrationLevel by mutableFloatStateOf(1f)
+
+    var previousSoundLevel by mutableFloatStateOf(1f)
+    var previousVibrationLevel by mutableFloatStateOf(1f)
+
+    var sleepMode by mutableStateOf(false)
+
+    fun toggleSleepMode() {
+        if (!sleepMode) {
+            previousSoundLevel = soundLevel
+            previousVibrationLevel = vibrationLevel
+            soundLevel = 0f
+            vibrationLevel = 0f
+            sleepMode = true
+        } else {
+            soundLevel = previousSoundLevel
+            vibrationLevel = previousVibrationLevel
+            sleepMode = false
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationSettingsScrn(navController: NavController) {
-    val activity = LocalContext.current as MainActivity
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(AppThemeState.backgroundColor)
     ) {
         CenterAlignedTopAppBar(
             title = {
                 Text(
                     text = "Notification Settings",
-                    color = MaterialTheme.colorScheme.onBackground,
-                    style = MaterialTheme.typography.titleLarge
+                    color = AppThemeState.textColor
                 )
             },
             navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(onClick = { navController.navigate("screen_3") }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.onBackground
+                        tint = AppThemeState.textColor
                     )
                 }
             },
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.background,
-                navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
-                titleContentColor = MaterialTheme.colorScheme.onBackground
+                containerColor = AppThemeState.topBarColor
             )
         )
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(28.dp)
+                .padding(horizontal = 28.dp, vertical = 24.dp)
         ) {
-            /*Text(
-                text = "Sleep Mode: ${if (activity.sleepMode) "ON" else "OFF"}",
+            Text(
+                text = "Sleep Mode: ${if (NotificationSettingsState.sleepMode) "ON" else "OFF"}",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onBackground
-            )*/ //Julian's
-
-            Text(
-                text = "Sound: ${(activity.soundLevel * 100).toInt()}%",
-                color = MaterialTheme.colorScheme.onBackground
+                color = AppThemeState.textColor
             )
 
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(
+                text = "Sound: ${(NotificationSettingsState.soundLevel * 100).toInt()}%",
+                style = MaterialTheme.typography.bodyLarge,
+                color = AppThemeState.textColor
+            )
+
+            Spacer(modifier = Modifier.height(18.dp))
+
             Slider(
-                value = activity.soundLevel,
+                value = NotificationSettingsState.soundLevel,
                 onValueChange = {
-                    if (!activity.sleepMode) {
-                        activity.soundLevel = it
+                    NotificationSettingsState.soundLevel = it
+                    if (NotificationSettingsState.sleepMode && it > 0f) {
+                        NotificationSettingsState.sleepMode = false
                     }
                 },
-                valueRange = 0f..1f,
-                enabled = !activity.sleepMode,
                 colors = SliderDefaults.colors(
-                    thumbColor = MaterialTheme.colorScheme.primary,
-                    activeTrackColor = MaterialTheme.colorScheme.primary,
-                    inactiveTrackColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
-                    disabledThumbColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
-                    disabledActiveTrackColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.25f),
-                    disabledInactiveTrackColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.15f)
+                    thumbColor = AppThemeState.purpleColor,
+                    activeTrackColor = AppThemeState.purpleColor,
+                    inactiveTrackColor = AppThemeState.purpleColor.copy(alpha = 0.35f)
                 )
             )
 
+            Spacer(modifier = Modifier.height(32.dp))
+
             Text(
-                text = "Vibration: ${(activity.vibrationLevel * 100).toInt()}%",
-                color = MaterialTheme.colorScheme.onBackground
+                text = "Vibration: ${(NotificationSettingsState.vibrationLevel * 100).toInt()}%",
+                style = MaterialTheme.typography.bodyLarge,
+                color = AppThemeState.textColor
             )
 
+            Spacer(modifier = Modifier.height(18.dp))
+
             Slider(
-                value = activity.vibrationLevel,
+                value = NotificationSettingsState.vibrationLevel,
                 onValueChange = {
-                    if (!activity.sleepMode) {
-                        activity.vibrationLevel = it
+                    NotificationSettingsState.vibrationLevel = it
+                    if (NotificationSettingsState.sleepMode && it > 0f) {
+                        NotificationSettingsState.sleepMode = false
                     }
                 },
-                valueRange = 0f..1f,
-                enabled = !activity.sleepMode,
                 colors = SliderDefaults.colors(
-                    thumbColor = MaterialTheme.colorScheme.primary,
-                    activeTrackColor = MaterialTheme.colorScheme.primary,
-                    inactiveTrackColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
-                    disabledThumbColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
-                    disabledActiveTrackColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.25f),
-                    disabledInactiveTrackColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.15f)
+                    thumbColor = AppThemeState.purpleColor,
+                    activeTrackColor = AppThemeState.purpleColor,
+                    inactiveTrackColor = AppThemeState.purpleColor.copy(alpha = 0.35f)
                 )
             )
 
-            /*Text(
-                text = if (activity.sleepMode) {
-                    "Sleep Mode is active. Long press the bell again to restore your previous sound and vibration levels."
-                } else {
-                    "Long press the bell to silence all alerts."
-                },
-                color = MaterialTheme.colorScheme.onBackground
-            )*/ //Julian's
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(
+                text = "Long press the bell to silence all alerts.",
+                style = MaterialTheme.typography.bodyLarge,
+                color = AppThemeState.textColor
+            )
         }
     }
 }
